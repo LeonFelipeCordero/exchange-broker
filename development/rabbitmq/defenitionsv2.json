@@ -1,0 +1,23 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "users": [
+    {
+      "name": "market_data",
+      "password_hash": "MDaX/sjd/LaMyxQ4nUOI53xSJY46EAXJRpjHV1QegvT0BRrj",
+      "tags": [ "administrator" ]
+    }
+  ],
+  "permissions": [
+    {
+      "user": "market_data",
+      "vhost": "/",
+      "configure": ".*",
+      "read": ".*",
+      "write": ".*"
+    }
+  ]
+}

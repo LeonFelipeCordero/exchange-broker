@@ -1,0 +1,49 @@
+version: "3.9"
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  rabbitmq:
+    driver: local
+  postgres:
+    driver: local
+
+services:
+  rabbitmq:
+    image: "bitnami/rabbitmq:latest"
+    networks:
+      - app
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_PASSWORD=12345
+      - RABBITMQ_USERNAME=market_data
+      - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
+      - RABBITMQ_DEFINITIONS_FILE=/etc/rabbitmq/defenitions.json
+      - RABBITMQ_LOAD_DEFINITIONS=yes
+    volumes:
+      - "./rabbitmq/defenitions.json:/etc/rabbitmq/defenitions.json"
+
+  postgres:
+    image: timescaledev/timescaledb-ha:pg16
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=exchange
+      - POSTGRES_USER=exchange
+      - POSTGRES_PASSWORD=exchange
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./init-db/schema-creation.sql:/docker-entrypoint-initdb.d/z_01_schema-creation.sql
+
+  # exchange-market-data-producer:
+  #   image: "exchange-market-data-producer"
+  #   networks:
+  #     - app
+  #   ports:
+  #     - "8080:8080"
+
