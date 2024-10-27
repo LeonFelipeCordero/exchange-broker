@@ -12,14 +12,14 @@ data class Instrument(
     val timestamp: ZonedDateTime,
     val name: String,
     val state: InstrumentState,
-    val currency: String
+    val currency: String,
 )
 
 data class Quote(
     val isin: String,
     val timestamp: ZonedDateTime,
     val currency: String,
-    val price: BigDecimal
+    val price: BigDecimal,
 ) {
     fun updatePrice(): Quote {
         val up = Random.nextBoolean()
@@ -37,7 +37,7 @@ data class Quote(
 
 enum class InstrumentState {
     ADDED,
-    DELETED
+    DELETED,
 }
 
 interface CountryCurrency {
@@ -60,5 +60,5 @@ interface ProducerConfiguration {
 enum class InstrumentStatusChangeRate {
     LOW,
     MID,
-    HIGH
+    HIGH,
 }

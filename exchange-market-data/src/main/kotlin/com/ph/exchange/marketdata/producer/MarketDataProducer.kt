@@ -76,13 +76,13 @@ class MarketDataProducer {
                 name = name,
                 timestamp = ZonedDateTime.now(),
                 state = InstrumentState.ADDED,
-                currency = country.currency()
+                currency = country.currency(),
             )
             val quote = Quote(
                 isin = isin,
                 timestamp = ZonedDateTime.now(),
                 currency = country.currency(),
-                price = randomPrice()
+                price = randomPrice(),
             )
             availableIsins.add(isin)
             availableInstruments[instrument.isin] = instrument
@@ -94,11 +94,11 @@ class MarketDataProducer {
     protected suspend fun startStreaming() = coroutineScope {
         val instrumentTick = ticker(
             delayMillis = producerConfiguration.instrumentsChangeFrequencyInMillis(),
-            initialDelayMillis = 1000
+            initialDelayMillis = 1000,
         )
         val quotesTick = ticker(
             delayMillis = producerConfiguration.quotesGenerationFrequencyInMillis(),
-            initialDelayMillis = 1000
+            initialDelayMillis = 1000,
         )
 
         val instrumentsJob = launch {
@@ -129,7 +129,7 @@ class MarketDataProducer {
                     availableInstruments[newInstrument.isin] = newInstrument
                     instrumentChannel.send(newInstrument)
                     Log.debug(
-                        "Instrument ${newInstrument.isin} change of state ${targetInstrument.state}->${newInstrument.state}"
+                        "Instrument ${newInstrument.isin} change of state ${targetInstrument.state}->${newInstrument.state}",
                     )
                 }
             }
@@ -173,7 +173,7 @@ class MarketDataProducer {
                         quotes[newQuote.isin] = newQuote
                         quoteChannel.send(newQuote)
                         Log.debug(
-                            "New quote created, Isin: ${newQuote.isin}, Quote: ${newQuote.price} old Quote: ${quote.price}"
+                            "New quote created, Isin: ${newQuote.isin}, Quote: ${newQuote.price} old Quote: ${quote.price}",
                         )
                     }
                 }
@@ -190,4 +190,3 @@ class MarketDataProducer {
         init()
     }
 }
-

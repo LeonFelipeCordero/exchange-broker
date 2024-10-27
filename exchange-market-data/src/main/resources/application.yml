@@ -73,3 +73,5 @@ application:
         currency: EUR
       - country-code: FR
         currency: EUR
+  transactional-outbox:
+    enabled: true

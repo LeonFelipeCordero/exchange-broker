@@ -2,10 +2,11 @@ package com.ph.exchange.orders.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ph.exchange.orders.model.Order
-import com.ph.exchange.orders.model.OrderEventTypes
-import com.ph.exchange.orders.repository.entities.OrderEntity
+import com.ph.exchange.orders.model.events.internal.OrderEventTypes
+import com.ph.exchange.orders.model.events.internal.OrderFilledEvent
 import com.ph.exchange.orders.repository.OrderRepository
-import com.ph.exchange.transactionaloutbox.TransactionalOutboxInternalMessage
+import com.ph.exchange.orders.repository.entities.OrderEntity
+import com.ph.exchange.transactionaloutbox.model.TransactionalOutboxInternalMessage
 import com.ph.exchange.transactionaloutbox.service.TransactionalOutboxService
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -33,13 +34,14 @@ class OrderService {
 
         orderRepository.findAllByExternalReference(orderReferences)
             .map { it.toDomain() }
+            .map { OrderFilledEvent.fromDomain(it) }
             .forEach {
                 val message = objectMapper.writeValueAsString(it)
                 transactionalOutboxService.persist(
                     TransactionalOutboxInternalMessage(
                         event = OrderEventTypes.ORDER_FILLED.name,
                         message = message,
-                    )
+                    ),
                 )
             }
     }

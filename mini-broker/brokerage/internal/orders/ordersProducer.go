@@ -67,15 +67,16 @@ func (o *OrdersProducer) createOrders() {
 			amount := price * quantity
 
 			order := domain.Order{
-				Reference:  uuid.NewString(),
-				Instrument: quote.Isin,
-				Nominals:   quantity,
-				Price:      price,
-				Amount:     amount,
-				Type:       randomiseType(),
-				Trader:     user,
-				Currency:   quote.Currency,
-				Timestamp:  time.Now(),
+				Reference:   uuid.NewString(),
+				Instrument:  quote.Isin,
+				Nominals:    quantity,
+				Price:       price,
+				Amount:      amount,
+				Type:        randomiseType(),
+				Trader:      user,
+				Institution: config.InstitutionId,
+				Currency:    quote.Currency,
+				Timestamp:   time.Now(),
 			}
 			encoded, _ := json.Marshal(order)
 			o.ordersChannel <- encoded

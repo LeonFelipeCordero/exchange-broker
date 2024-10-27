@@ -3,12 +3,10 @@ package com.ph.exchange.marketdata.api
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ph.exchange.IntegrationTestBase
-import com.ph.exchange.marketdata.MarketDataProducerWithStreamingProfile
 import com.ph.exchange.marketdata.model.Instrument
 import com.ph.exchange.marketdata.model.Quote
 import io.quarkus.test.common.http.TestHTTPResource
 import io.quarkus.test.junit.QuarkusTest
-import io.quarkus.test.junit.TestProfile
 import io.quarkus.websockets.next.BasicWebSocketConnector
 import jakarta.inject.Inject
 import org.assertj.core.api.Assertions.assertThat
@@ -18,7 +16,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 @QuarkusTest
-@TestProfile(MarketDataProducerWithStreamingProfile::class)
 class FullApiMarketDataServiceTest : IntegrationTestBase() {
 
     @Inject
@@ -49,7 +46,7 @@ class FullApiMarketDataServiceTest : IntegrationTestBase() {
             .onTextMessage { _, m ->
                 if (latch1.count == 1L) {
                     instruments.addAll(
-                        objectMapper.readValue(m, object : TypeReference<List<Instrument>>() {})
+                        objectMapper.readValue(m, object : TypeReference<List<Instrument>>() {}),
                     )
                 }
                 latch1.countDown()

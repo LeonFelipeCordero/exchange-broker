@@ -4,8 +4,6 @@ import com.ph.exchange.orders.model.MatchedOrder
 import com.ph.exchange.orders.model.OpenOrder
 import com.ph.exchange.orders.model.Order
 import com.ph.exchange.orders.model.OrderType
-import com.ph.exchange.transactionaloutbox.InternalTransactionalOutbox
-import com.ph.exchange.transactionaloutbox.service.TransactionalOutboxService
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -69,13 +67,13 @@ class OrderMatcher {
                 MatchedOrder(
                     buyReference = matchedContraOrder.orderReference,
                     sellReference = resultOrder.orderReference,
-                    matchNominals = matchedNominals
+                    matchNominals = matchedNominals,
                 )
             } else {
                 MatchedOrder(
                     buyReference = resultOrder.orderReference,
                     sellReference = matchedContraOrder.orderReference,
-                    matchNominals = matchedNominals
+                    matchNominals = matchedNominals,
                 )
             }
             matchedOrders.add(matchedOrder)
@@ -98,6 +96,7 @@ class OrderMatcher {
             filledOrders.add(resultOrder.orderReference)
         }
         openOrderService.removeAll(ordersToDelete)
+        // todo this could goto the test and not here
         entityManager.clear()
         openOrderService.persist(ordersToPersist)
         matchedOrderService.persist(matchedOrders)

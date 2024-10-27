@@ -17,12 +17,13 @@ func main() {
 	marketDataConsumer := market_data.CreateMarketDataConsumer(ctx)
 
 	var wg sync.WaitGroup
-	wg.Add(2)
-	log.Println("initializing market data consumer...")
+	wg.Add(5)
+	log.Println("initializing market data and orders consumers...")
 	go marketDataConnector.Connect()
 	go marketDataConsumer.Connect()
 	go orders.StartRandomOrderCreation(ctx)
 	go orders.ConnectExchangeCreateOrderApi()
+	go orders.ConnectExchangeOrderUpdatesApi()
 	// todo I still need to handle the orders updates from the exchange
 	wg.Wait()
 }

@@ -29,6 +29,8 @@ const (
 	InstrumentsSize = 5
 	// TradersSize should be 100
 	TradersSize = 1
+	// InstitutionId Institution ID to add in orders
+	InstitutionId = "test_institution_12345"
 )
 
 // InstrumentTicker original value is 100ms

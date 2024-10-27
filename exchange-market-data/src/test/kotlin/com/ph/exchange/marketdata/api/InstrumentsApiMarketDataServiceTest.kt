@@ -3,11 +3,9 @@ package com.ph.exchange.marketdata.api
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ph.exchange.IntegrationTestBase
-import com.ph.exchange.marketdata.MarketDataProducerWithStreamingProfile
 import com.ph.exchange.marketdata.model.Instrument
 import io.quarkus.test.common.http.TestHTTPResource
 import io.quarkus.test.junit.QuarkusTest
-import io.quarkus.test.junit.TestProfile
 import io.quarkus.websockets.next.BasicWebSocketConnector
 import jakarta.inject.Inject
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +15,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 @QuarkusTest
-@TestProfile(MarketDataProducerWithStreamingProfile::class)
 class InstrumentsApiMarketDataServiceTest : IntegrationTestBase() {
 
     @Inject

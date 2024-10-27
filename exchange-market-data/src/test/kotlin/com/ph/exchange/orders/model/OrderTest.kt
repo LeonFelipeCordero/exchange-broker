@@ -6,20 +6,20 @@ import org.junit.jupiter.params.provider.CsvSource
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
-
 class OrderTest {
 
     @ParameterizedTest
-    @CsvSource(textBlock =
+    @CsvSource(
+        textBlock =
         """
         12.4059084,12.40
         5.8723490,5.80
         8490284.341238,8490284.30
-        0.00,0.00"""
+        0.00,0.00""",
     )
     fun `should create the key for an order correct`(
         price: BigDecimal,
-        expectedKey: BigDecimal
+        expectedKey: BigDecimal,
     ) {
         val order = Order(
             externalReference = "1",
@@ -30,9 +30,10 @@ class OrderTest {
             currency = "EUR",
             type = OrderType.BUY,
             trader = "1",
+            institution = "test",
             timestamp = OffsetDateTime.now(),
             orderReference = "",
-            state = OrderState.OPEN
+            state = OrderState.OPEN,
         )
         assertThat(order.priceKey).isEqualTo(expectedKey)
     }

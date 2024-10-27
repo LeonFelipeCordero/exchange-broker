@@ -28,8 +28,9 @@ class OrderSubmissionWebSocketApi {
     fun onMessage(orderMessage: String) {
         emitter.send(
             Message.of(
-                orderMessage, Metadata.of(outgoingRabbitMQMetadata)
-            )
+                orderMessage,
+                Metadata.of(outgoingRabbitMQMetadata),
+            ),
         )
         // todo reply back for order submission confirmation
     }

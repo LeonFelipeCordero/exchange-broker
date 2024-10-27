@@ -11,7 +11,7 @@ import jakarta.inject.Inject
 import org.eclipse.microprofile.reactive.messaging.Incoming
 
 @ApplicationScoped
-class InstrumentHandler {
+class OrderCreatedHandler {
 
     @Inject
     private lateinit var objectMapper: ObjectMapper
@@ -24,6 +24,6 @@ class InstrumentHandler {
     fun handler(orderCreationMessage: String) {
         val order = objectMapper.readValue(orderCreationMessage, object : TypeReference<OrderSubmissionEvent>() {})
         Log.debug("got message from for order creation: ${order.loggingReference()}")
-        orderMatcher.processOrder(order.toNewOrderDomain())
+        orderMatcher.processOrder(order.toOrder())
     }
 }

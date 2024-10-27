@@ -27,12 +27,13 @@ class OrderEntity(
     val currency: String,
     val type: String,
     val trader: String,
+    val institution: String,
     val state: String,
     val timestamp: OffsetDateTime,
     @CreationTimestamp
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @UpdateTimestamp
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) : PanacheEntityBase {
     companion object {
         fun fromDomain(order: Order): OrderEntity {
@@ -46,6 +47,7 @@ class OrderEntity(
                 currency = order.currency,
                 type = order.type.name,
                 trader = order.trader,
+                institution = order.institution,
                 state = order.state.name,
                 timestamp = order.timestamp,
             )
@@ -63,8 +65,9 @@ class OrderEntity(
             currency = currency,
             type = OrderType.valueOf(type),
             trader = trader,
+            institution = institution,
             state = OrderState.valueOf(state),
-            timestamp = timestamp
+            timestamp = timestamp,
         )
     }
 }

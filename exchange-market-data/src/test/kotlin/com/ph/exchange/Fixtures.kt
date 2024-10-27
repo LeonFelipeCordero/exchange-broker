@@ -4,6 +4,7 @@ import com.ph.exchange.orders.model.OpenOrder
 import com.ph.exchange.orders.model.Order
 import com.ph.exchange.orders.model.OrderState
 import com.ph.exchange.orders.model.OrderType
+import com.ph.exchange.orders.model.events.internal.OrderFilledEvent
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 import java.util.*
@@ -17,7 +18,8 @@ object Fixtures {
         amount: BigDecimal = nominals * price,
         type: OrderType = OrderType.BUY,
         timestamp: OffsetDateTime = OffsetDateTime.now(),
-        externalReference: String = "external_reference"
+        externalReference: String = "external_reference",
+        state: OrderState = OrderState.OPEN,
     ): Order {
         return Order(
             orderReference = orderReference,
@@ -28,9 +30,10 @@ object Fixtures {
             type = type,
             currency = "EUR",
             trader = "a",
+            institution = "test",
             externalReference = externalReference,
-            state = OrderState.OPEN,
-            timestamp = timestamp
+            state = state,
+            timestamp = timestamp,
         )
     }
 
@@ -50,7 +53,28 @@ object Fixtures {
             price = price,
             priceKey = priceKey,
             type = type,
-            timestamp = timestamp
+            timestamp = timestamp,
+        )
+    }
+
+    fun anOrderFilledEvent(
+        orderReference: String = "test12345",
+        instrument: String = "DE1122334455",
+        nominals: BigDecimal = BigDecimal.ONE,
+        price: BigDecimal = BigDecimal.ONE,
+        timestamp: OffsetDateTime = OffsetDateTime.now().minusHours(1),
+        externalReference: String = "external_reference",
+        institution: String = "test"
+    ): OrderFilledEvent {
+        return OrderFilledEvent(
+            orderReference = orderReference,
+            externalReference = externalReference,
+            instrument = instrument,
+            nominals = nominals,
+            originalPrice = price,
+            institution = institution,
+            submissionTimestamp = timestamp,
+            filledTimestamp = OffsetDateTime.now()
         )
     }
 }

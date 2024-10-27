@@ -9,8 +9,9 @@ import io.quarkus.websockets.next.WebSocket
 import io.quarkus.websockets.next.WebSocketConnection
 import jakarta.inject.Inject
 
-@WebSocket(path = "/ws/orders/update")
+@WebSocket(path = "/ws/orders/update/{institution}")
 class OrderUpdatesWebSocketApi {
+    val institutionPath = "institution"
 
     @Inject
     private lateinit var orderFilledEventListener: OrderFilledEventListener
@@ -22,7 +23,8 @@ class OrderUpdatesWebSocketApi {
     @OnOpen(broadcast = true)
     fun onOpen(webSocketConnection: WebSocketConnection) {
         Log.info("Connection open in order updates endpoint with id ${webSocketConnection.id()}")
-        orderFilledEventListener.addConnection(webSocketConnection.id())
+        val institution = webSocketConnection.pathParam(institutionPath)
+        orderFilledEventListener.addConnection(webSocketConnection.id(), institution)
     }
 
     @OnClose

@@ -13,21 +13,12 @@ sealed interface BasicOrder {
     val currency: String
     val type: OrderType
     val trader: String
+    val institution: String
     val timestamp: OffsetDateTime
 
     fun loggingReference(): String {
-        return "${instrument}_${nominals}_${price}"
+        return "${instrument}_${nominals}_$price"
     }
-}
-
-enum class OrderType {
-    BUY,
-    SELL
-}
-
-enum class OrderState {
-    OPEN,
-    FILLED
 }
 
 data class OrderSubmissionEvent(
@@ -38,10 +29,11 @@ data class OrderSubmissionEvent(
     override val currency: String,
     override val type: OrderType,
     override val trader: String,
+    override val institution: String,
     override val timestamp: OffsetDateTime,
     val reference: String,
 ) : BasicOrder {
-    fun toNewOrderDomain(): Order {
+    fun toOrder(): Order {
         return Order(
             orderReference = null,
             externalReference = reference,
@@ -52,8 +44,9 @@ data class OrderSubmissionEvent(
             currency = currency,
             type = type,
             trader = trader,
+            institution = institution,
             state = OrderState.OPEN,
-            timestamp = timestamp
+            timestamp = timestamp,
         )
     }
 }
@@ -66,6 +59,7 @@ data class Order(
     override val currency: String,
     override val type: OrderType,
     override val trader: String,
+    override val institution: String,
     override val timestamp: OffsetDateTime,
     val orderReference: String?,
     val externalReference: String,
@@ -79,9 +73,9 @@ data class Order(
         }
 
     fun contraType(): OrderType {
-        return if (type == OrderType.BUY)
+        return if (type == OrderType.BUY) {
             OrderType.SELL
-        else
+        } else
             OrderType.BUY
     }
 

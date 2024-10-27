@@ -6,14 +6,12 @@ import com.ph.exchange.orders.model.OrderState
 import com.ph.exchange.orders.model.OrderType
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
-import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 @QuarkusTest
-@Transactional
 class OrderMatcherTest : IntegrationTestBase() {
     private val instrument = "1"
     private val targetPriceAndKey = Pair(BigDecimal("2.55"), BigDecimal("2.555555"))
@@ -34,15 +32,15 @@ class OrderMatcherTest : IntegrationTestBase() {
                 instrument = instrument,
                 nominals = BigDecimal("2.00"),
                 price = targetPriceAndKey.second,
-                externalReference = externalReference
-            )
+                externalReference = externalReference,
+            ),
         )
         val order = orderRepository.findByExternalReference(externalReference).toDomain()
 
         val storedOpenOrder = openOrderRepository.findByInstrumentTypeAndKey(
             instrument = instrument,
             orderType = order.type.name,
-            key = order.priceKey
+            key = order.priceKey,
         )
         val orders = orderRepository.findAll().list()
 
@@ -57,21 +55,21 @@ class OrderMatcherTest : IntegrationTestBase() {
             anOrder(
                 instrument = instrument,
                 price = targetPriceAndKey.second,
-            )
+            ),
         )
         orderMatcher.processOrder(
             anOrder(
                 instrument = instrument,
                 price = targetPriceAndKey.second,
-            )
+            ),
         )
         orderMatcher.processOrder(
             anOrder(
                 instrument = instrument,
                 price = targetPriceAndKey.second,
                 type = OrderType.SELL,
-                nominals = BigDecimal("2.00")
-            )
+                nominals = BigDecimal("2.00"),
+            ),
         )
 
         val openOrders = openOrderRepository.findAll().list()
@@ -93,7 +91,7 @@ class OrderMatcherTest : IntegrationTestBase() {
             anOrder(
                 instrument = instrument,
                 price = targetPriceAndKey.second,
-            )
+            ),
         )
         orderMatcher.processOrder(
             anOrder(
@@ -101,8 +99,8 @@ class OrderMatcherTest : IntegrationTestBase() {
                 price = targetPriceAndKey.second,
                 type = OrderType.SELL,
                 nominals = BigDecimal("2.00"),
-                externalReference = externalReference
-            )
+                externalReference = externalReference,
+            ),
         )
         val order = orderRepository.findByExternalReference(externalReference).toDomain()
 
@@ -127,8 +125,8 @@ class OrderMatcherTest : IntegrationTestBase() {
                 instrument = instrument,
                 price = targetPriceAndKey.second,
                 nominals = BigDecimal("2.00"),
-                externalReference = externalReference
-            )
+                externalReference = externalReference,
+            ),
         )
         val order = orderRepository.findByExternalReference(externalReference).toDomain()
 
@@ -137,7 +135,7 @@ class OrderMatcherTest : IntegrationTestBase() {
                 instrument = instrument,
                 price = targetPriceAndKey.second,
                 type = OrderType.SELL,
-            )
+            ),
         )
 
         val openOrders = openOrderRepository.findAll().list()

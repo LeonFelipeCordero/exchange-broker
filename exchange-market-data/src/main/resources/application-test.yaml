@@ -1,0 +1,13 @@
+quarkus:
+  log:
+    console:
+      level: DEBUG
+application:
+  producer:
+    with-streaming: true
+    number-of-instruments: 3
+    instrument-change-rate: HIGH
+    instruments-change-frequency-in-millis: 1000
+    quotes-generation-frequency-in-millis: 250
+  transactional-outbox:
+    enabled: false

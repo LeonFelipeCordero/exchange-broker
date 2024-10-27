@@ -18,16 +18,15 @@ class OpenOrderSemaphoreEntity(
         fun fromDomain(openOrderSemaphore: OpenOrderSemaphore): OpenOrderSemaphoreEntity {
             return OpenOrderSemaphoreEntity(
                 orderReference = openOrderSemaphore.orderReference,
-                createdAt = openOrderSemaphore.createdAt
+                createdAt = openOrderSemaphore.createdAt,
             )
-
         }
     }
 
     fun toDomain(): OpenOrderSemaphore {
         return OpenOrderSemaphore(
             orderReference = orderReference,
-            createdAt = createdAt
+            createdAt = createdAt,
         )
     }
 }

@@ -2,8 +2,8 @@ package com.ph.exchange.orders.service
 
 import com.ph.exchange.orders.model.OpenOrder
 import com.ph.exchange.orders.model.OrderType
-import com.ph.exchange.orders.repository.entities.OpenOrderEntity
 import com.ph.exchange.orders.repository.OpenOrderRepository
+import com.ph.exchange.orders.repository.entities.OpenOrderEntity
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import java.math.BigDecimal
@@ -26,7 +26,7 @@ class OpenOrderService {
     fun findByInstrumentTypeAndKey(
         instrument: String,
         orderType: OrderType,
-        key: BigDecimal
+        key: BigDecimal,
     ): List<OpenOrder> {
         return openOrderRepository
             .findByInstrumentTypeAndKey(instrument, orderType.name, key)

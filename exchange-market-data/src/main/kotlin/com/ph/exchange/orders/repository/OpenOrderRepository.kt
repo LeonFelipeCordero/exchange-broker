@@ -1,6 +1,5 @@
 package com.ph.exchange.orders.repository
 
-import com.ph.exchange.orders.model.OpenOrder
 import com.ph.exchange.orders.repository.entities.OpenOrderEntity
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheRepository
 import jakarta.enterprise.context.ApplicationScoped
@@ -16,7 +15,7 @@ class OpenOrderRepository : PanacheRepository<OpenOrderEntity> {
     fun findByInstrumentTypeAndKey(
         instrument: String,
         orderType: String,
-        key: BigDecimal
+        key: BigDecimal,
     ): List<OpenOrderEntity> {
         return list("instrument = ?1 and type = ?2 and priceKey = ?3", instrument, orderType, key)
     }

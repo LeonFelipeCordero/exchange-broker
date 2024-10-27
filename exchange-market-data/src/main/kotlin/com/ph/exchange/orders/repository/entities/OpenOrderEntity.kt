@@ -23,7 +23,7 @@ class OpenOrderEntity(
     @CreationTimestamp
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @UpdateTimestamp
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) : PanacheEntityBase {
     companion object {
         fun fromDomain(openOrder: OpenOrder): OpenOrderEntity {
@@ -47,7 +47,7 @@ class OpenOrderEntity(
             price = price,
             priceKey = priceKey,
             type = OrderType.valueOf(type),
-            timestamp = timestamp
+            timestamp = timestamp,
         )
     }
 }

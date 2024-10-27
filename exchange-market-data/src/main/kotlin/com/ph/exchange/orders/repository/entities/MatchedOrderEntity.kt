@@ -18,16 +18,16 @@ class MatchedOrderEntity(
     @CreationTimestamp
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @UpdateTimestamp
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) : PanacheEntityBase {
     companion object {
         fun fromDomain(matchedOrder: MatchedOrder): MatchedOrderEntity {
             return MatchedOrderEntity(
                 matchedOrderId = MatchedOrderId(
                     buyReference = matchedOrder.buyReference,
-                    sellReference = matchedOrder.sellReference
+                    sellReference = matchedOrder.sellReference,
                 ),
-                matchedNominals = matchedOrder.matchNominals
+                matchedNominals = matchedOrder.matchNominals,
             )
         }
     }
@@ -36,7 +36,7 @@ class MatchedOrderEntity(
         return MatchedOrder(
             buyReference = matchedOrderId.buyReference,
             sellReference = matchedOrderId.sellReference,
-            matchNominals = matchedNominals
+            matchNominals = matchedNominals,
         )
     }
 }

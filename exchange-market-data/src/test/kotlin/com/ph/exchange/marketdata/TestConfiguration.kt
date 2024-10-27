@@ -6,7 +6,7 @@ class MarketDataProducerWithoutStreamingProfile : QuarkusTestProfile {
     override fun getConfigOverrides(): MutableMap<String, String> {
         return mutableMapOf(
             "application.producer.with-streaming" to "false",
-            "application.producer.number-of-instruments" to "5"
+            "application.producer.number-of-instruments" to "5",
         )
     }
 }

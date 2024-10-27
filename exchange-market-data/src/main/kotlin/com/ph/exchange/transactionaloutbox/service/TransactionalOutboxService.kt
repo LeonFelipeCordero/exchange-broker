@@ -1,13 +1,13 @@
 package com.ph.exchange.transactionaloutbox.service
 
-import com.ph.exchange.transactionaloutbox.TransactionalOutboxInternalMessage
+import com.ph.exchange.transactionaloutbox.model.TransactionalOutboxInternalMessage
 import com.ph.exchange.transactionaloutbox.repository.TransactionalOutboxInternalMessageRepository
 import com.ph.exchange.transactionaloutbox.repository.entities.TransactionalOutboxInternalEntity
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 
 @ApplicationScoped
-class TransactionalOutboxService() {
+class TransactionalOutboxService {
 
     @Inject
     private lateinit var transactionalOutboxInternalMessageRepository: TransactionalOutboxInternalMessageRepository

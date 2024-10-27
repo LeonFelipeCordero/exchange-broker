@@ -5,14 +5,12 @@ import com.ph.exchange.IntegrationTestBase
 import com.ph.exchange.orders.model.OrderType
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
-import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 @QuarkusTest
-@Transactional
 class OpenOrderServiceTest : IntegrationTestBase() {
     val instrument = "1"
     val pricesAndKeys = listOf(
@@ -20,7 +18,7 @@ class OpenOrderServiceTest : IntegrationTestBase() {
         Pair(BigDecimal("12.54"), BigDecimal("12.5499")),
         Pair(BigDecimal("12.54"), BigDecimal("12.5400")),
         Pair(BigDecimal("12.55"), BigDecimal("12.55555")),
-        Pair(BigDecimal("12.53"), BigDecimal("12.5399"))
+        Pair(BigDecimal("12.53"), BigDecimal("12.5399")),
     )
 
     @Inject
@@ -29,24 +27,32 @@ class OpenOrderServiceTest : IntegrationTestBase() {
     @BeforeEach
     fun setUp() {
         clean()
-        openOrderService.persist(pricesAndKeys.map {
-            anOpenOrder(instrument = instrument, priceKey = it.first, price = it.second)
-        })
+        openOrderService.persist(
+            pricesAndKeys.map {
+                anOpenOrder(instrument = instrument, priceKey = it.first, price = it.second)
+            },
+        )
     }
 
     @Test
     fun `should fetch a list of orders under the same key`() {
         val firstKeyOrders =
             openOrderService.findByInstrumentTypeAndKey(
-                instrument, OrderType.BUY, BigDecimal("12.54")
+                instrument,
+                OrderType.BUY,
+                BigDecimal("12.54"),
             )
         val secondKeyOrders =
             openOrderService.findByInstrumentTypeAndKey(
-                instrument, OrderType.BUY, BigDecimal("12.53")
+                instrument,
+                OrderType.BUY,
+                BigDecimal("12.53"),
             )
         val thirdKeyOrders =
             openOrderService.findByInstrumentTypeAndKey(
-                instrument, OrderType.BUY, BigDecimal("12.55")
+                instrument,
+                OrderType.BUY,
+                BigDecimal("12.55"),
             )
 
         assertThat(firstKeyOrders).hasSize(3)
@@ -85,12 +91,16 @@ class OpenOrderServiceTest : IntegrationTestBase() {
     fun `should delete all given orders`() {
         val openOrders =
             openOrderService.findByInstrumentTypeAndKey(
-                instrument, OrderType.BUY, BigDecimal("12.54")
+                instrument,
+                OrderType.BUY,
+                BigDecimal("12.54"),
             )
         openOrderService.removeAll(openOrders.map { it.orderReference!! })
         val foundByKey =
             openOrderService.findByInstrumentTypeAndKey(
-                instrument, OrderType.BUY, BigDecimal("12.54")
+                instrument,
+                OrderType.BUY,
+                BigDecimal("12.54"),
             )
         assertThat(foundByKey).isEmpty()
     }

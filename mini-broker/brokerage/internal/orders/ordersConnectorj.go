@@ -35,10 +35,10 @@ func ConnectExchangeCreateOrderApi() {
 }
 
 func ConnectExchangeOrderUpdatesApi() {
-	rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
-	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
-
-	host := "ws://localhost:8080/ws/orders/updates"
+	//rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
+	//queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
+	//
+	host := "ws://localhost:8080/ws/orders/update/" + config.InstitutionId
 	log.Printf("connecting to %s", host)
 
 	c, _, err := websocket.DefaultDialer.Dial(host, nil)
@@ -54,12 +54,12 @@ func ConnectExchangeOrderUpdatesApi() {
 	go handeInterruptSignal(c, interrupt)
 	go handleConnection(c, messageChannel)
 
-	for message := range queueChannel {
-		err = c.WriteMessage(websocket.TextMessage, message.Body)
-		if err != nil {
-			log.Println("Error writing message to websocket connection", err)
-		}
-	}
+	//for message := range queueChannel {
+	//	err = c.WriteMessage(websocket.TextMessage, message.Body)
+	//	if err != nil {
+	//		log.Println("Error writing message to websocket connection", err)
+	//	}
+	//}
 }
 
 func handeInterruptSignal(connection *websocket.Conn, interrupt chan os.Signal) {

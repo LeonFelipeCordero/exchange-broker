@@ -15,7 +15,7 @@ val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
-    implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
+    implementation(enforcedPlatform("$quarkusPlatformGroupId:$quarkusPlatformArtifactId:$quarkusPlatformVersion"))
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-logging-json")
@@ -28,6 +28,8 @@ dependencies {
     implementation("io.quarkus:quarkus-hibernate-orm-panache-kotlin")
     implementation("io.quarkus:quarkus-liquibase")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
+//    implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.8.3")
 
     implementation("io.smallrye.reactive:mutiny-kotlin:2.6.2")
 

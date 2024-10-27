@@ -14,6 +14,7 @@ create table orders
     currency           text           not null,
     type               text           not null,
     trader             text           not null,
+    institution        text           not null,
     state              text           not null,
     timestamp          timestamptz    not null,
     created_at         timestamptz    not null default CURRENT_TIMESTAMP,

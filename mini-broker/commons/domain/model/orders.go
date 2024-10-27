@@ -7,15 +7,16 @@ import (
 )
 
 type Order struct {
-	Reference  string    `json:"reference"`
-	Instrument string    `json:"instrument"`
-	Nominals   float64   `json:"nominals"`
-	Price      float64   `json:"price"`
-	Amount     float64   `json:"amount"`
-	Currency   string    `json:"currency"`
-	Type       string    `json:"type"`
-	Trader     string    `json:"trader"`
-	Timestamp  time.Time `json:"timestamp"`
+	Reference   string    `json:"reference"`
+	Instrument  string    `json:"instrument"`
+	Nominals    float64   `json:"nominals"`
+	Price       float64   `json:"price"`
+	Amount      float64   `json:"amount"`
+	Currency    string    `json:"currency"`
+	Type        string    `json:"type"`
+	Trader      string    `json:"trader"`
+	Institution string    `json:"institution"`
+	Timestamp   time.Time `json:"timestamp"`
 }
 
 type OpenOrder struct {
