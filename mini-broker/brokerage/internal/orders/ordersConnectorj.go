@@ -85,7 +85,7 @@ func handleConnection(connection *websocket.Conn, messageChannel chan []byte) {
 			return
 		}
 		//todo this one has to be be first connected to a consumer, for now only prints the message
-		messageChannel <- message
+		//messageChannel <- message
 		log.Printf("received: %s", message)
 	}
 }

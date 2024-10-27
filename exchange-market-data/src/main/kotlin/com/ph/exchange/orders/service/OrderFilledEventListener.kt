@@ -7,6 +7,7 @@ import com.ph.exchange.orders.model.events.internal.OrderFilledEvent
 import io.quarkus.logging.Log
 import io.quarkus.vertx.ConsumeEvent
 import io.quarkus.websockets.next.OpenConnections
+import io.smallrye.common.annotation.Blocking
 import io.smallrye.mutiny.Uni
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -21,21 +22,20 @@ class OrderFilledEventListener {
     @Inject
     private lateinit var objectMapper: ObjectMapper
 
-    // todo this needs to broadcast only to the target connection
+    @Blocking
     @ConsumeEvent("ORDER_FILLED")
     fun consume(message: String): Uni<String> {
         Log.debug("Got message order filled $message")
         val order =
             objectMapper.readValue(message, object : TypeReference<OrderFilledEvent>() {})
-        openConnections
-            .filter {
-                ordersConnections.values.contains(it.id()) &&
-                        ordersConnections[it.id()] == order.institution
-            }
-            .forEach {
-                Log.debug("sending message $message FILLED -> ${it.id()}")
-                it.sendTextAndAwait(message)
-            }
+        val connection = openConnections.find {
+            ordersConnections.keys.contains(it.id()) &&
+                    ordersConnections[it.id()] == order.institution
+        }
+        if (connection != null) {
+            Log.info("sending message $message FILLED -> ${connection.id()}")
+            connection.sendTextAndAwait(message)
+        }
         return Uni.createFrom().item(InternalEventingMessageStatus.OK.name)
     }
 
