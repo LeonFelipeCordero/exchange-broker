@@ -24,6 +24,5 @@ func main() {
 	go orders.StartRandomOrderCreation(ctx)
 	go orders.ConnectExchangeCreateOrderApi()
 	go orders.ConnectExchangeOrderUpdatesApi()
-	// todo I still need to handle the orders updates from the exchange
 	wg.Wait()
 }

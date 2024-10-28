@@ -1,8 +1,8 @@
 package market_data
 
 import (
-	"commons/config"
-	"commons/rabbitmq"
+	"brokerage/config"
+	"brokerage/pkg/rabbitmq"
 	"context"
 	"github.com/gorilla/websocket"
 	"log"

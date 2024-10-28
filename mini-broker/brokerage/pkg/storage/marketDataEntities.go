@@ -1,7 +1,7 @@
 package storage
 
 import (
-	domain "commons/domain/model"
+	domain "brokerage/domain/model"
 	"time"
 )
 

@@ -1,10 +1,10 @@
 package market_data
 
 import (
+	"brokerage/config"
+	domain "brokerage/domain/model"
+	"brokerage/pkg/rabbitmq"
 	"brokerage/pkg/storage"
-	"commons/config"
-	domain "commons/domain/model"
-	"commons/rabbitmq"
 	"context"
 	"encoding/json"
 	amqp "github.com/rabbitmq/amqp091-go"

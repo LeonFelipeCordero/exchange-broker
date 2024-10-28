@@ -1,8 +1,7 @@
 package storage
 
 import (
-	domain "commons/domain/model"
-	"commons/storage"
+	domain "brokerage/domain/model"
 	"context"
 	"time"
 )
@@ -15,12 +14,12 @@ type MarketDataRepository interface {
 }
 
 type marketDataImpl struct {
-	*storage.PostgresStorage
+	*PostgresStorage
 }
 
 func CreateMarketDataRepository() MarketDataRepository {
 	return marketDataImpl{
-		PostgresStorage: storage.CreatePostgresStorage(),
+		PostgresStorage: CreatePostgresStorage(),
 	}
 }
 

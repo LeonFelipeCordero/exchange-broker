@@ -67,25 +67,3 @@ func TestSlice(t *testing.T) {
 		assert.Equal(t, values, []string{"1", "2"})
 	})
 }
-
-//type testStruct struct {
-//	TestValue string
-//}
-//
-//func TestObjectSliceStore(t *testing.T) {
-//	slice := NewObjectSliceStore()
-//	val := testStruct{
-//		TestValue: "1",
-//	}
-//	slice.Push(&val)
-//	slice.Push(&testStruct{TestValue: "2"})
-//	slice.Push(&testStruct{TestValue: "3"})
-//
-//	t.Run("Object slice should save data in cache", func(t *testing.T) {
-//		value := slice.Get(0)
-//		assert.Equal(t, value, "1")
-//
-//		values := slice.GetAll()
-//		assert.Equal(t, values, []any{"1", "2"})
-//	})
-//}

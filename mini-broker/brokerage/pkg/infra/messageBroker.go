@@ -1,7 +1,7 @@
 package infra
 
 import (
-	"commons/rabbitmq"
+	"brokerage/pkg/rabbitmq"
 )
 
 func SetupBrokerInfra() {

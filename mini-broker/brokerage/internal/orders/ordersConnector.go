@@ -1,8 +1,8 @@
 package orders
 
 import (
-	"commons/config"
-	"commons/rabbitmq"
+	"brokerage/config"
+	"brokerage/pkg/rabbitmq"
 	"github.com/gorilla/websocket"
 	"log"
 	"os"
