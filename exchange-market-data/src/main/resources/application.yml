@@ -42,7 +42,7 @@ mp:
       exchange_order_created:
         connector: smallrye-rabbitmq
         queue:
-          name: exchange_order_updates_queue
+          name: exchange_order_created_queue
           routing-keys: order.created
           declare: false
         exchange:

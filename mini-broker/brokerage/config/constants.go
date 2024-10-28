@@ -9,9 +9,13 @@ const (
 	InstrumentUpdatedKey = "instrument.updated"
 	QuoteUpdatedKey      = "quote.updated"
 
-	BrokerOrdersTopic     = "broker_orders_topic"
-	BrokerOrderCreatedKey = "order.created"
-	BrokerOrderQueue      = "broker_orders_queue"
+	BrokerOrdersTopic         = "broker_orders_topic"
+	BrokerOrderCreatedKey     = "order.created"
+	BrokerOrderFilledKey      = "order.filled"
+	BrokerOrderCancelledKey   = "order.cancelled"
+	BrokerOrderCreatedQueue   = "broker_order_created_queue"
+	BrokerOrderFilledQueue    = "broker_order_filled_queue"
+	BrokerOrderCancelledQueue = "broker_order_cancelled_queue"
 
 	// TradersSize should be 100
 	TradersSize = 1

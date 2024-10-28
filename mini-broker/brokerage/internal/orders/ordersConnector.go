@@ -11,7 +11,7 @@ import (
 
 func ConnectExchangeCreateOrderApi() {
 	rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
-	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
+	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderCreatedQueue)
 
 	host := "ws://localhost:8080/ws/orders/submission"
 	log.Printf("connecting to %s", host)
