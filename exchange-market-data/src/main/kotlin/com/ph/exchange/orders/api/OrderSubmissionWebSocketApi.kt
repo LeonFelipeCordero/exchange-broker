@@ -1,5 +1,7 @@
 package com.ph.exchange.orders.api
 
+import io.opentelemetry.api.metrics.LongCounter
+import io.opentelemetry.api.metrics.Meter
 import io.quarkus.logging.Log
 import io.quarkus.websockets.next.OnClose
 import io.quarkus.websockets.next.OnOpen
@@ -7,6 +9,8 @@ import io.quarkus.websockets.next.OnTextMessage
 import io.quarkus.websockets.next.WebSocket
 import io.quarkus.websockets.next.WebSocketConnection
 import io.smallrye.reactive.messaging.rabbitmq.OutgoingRabbitMQMetadata
+import jakarta.annotation.PostConstruct
+import jakarta.inject.Inject
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.eclipse.microprofile.reactive.messaging.Emitter
 import org.eclipse.microprofile.reactive.messaging.Message
@@ -24,8 +28,22 @@ class OrderSubmissionWebSocketApi {
     @Channel("exchange_order_updates")
     private lateinit var emitter: Emitter<String>
 
+    @Inject
+    private lateinit var meter: Meter
+
+    private lateinit var orderSubmissionCounter: LongCounter
+
+    @PostConstruct
+    fun init() {
+        orderSubmissionCounter = meter.counterBuilder("order.submitted")
+            .setDescription("Counter for number of order received")
+            .setUnit("count")
+            .build()
+    }
+
     @OnTextMessage
     fun onMessage(orderMessage: String) {
+        orderSubmissionCounter.add(1)
         emitter.send(
             Message.of(
                 orderMessage,

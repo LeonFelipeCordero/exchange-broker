@@ -5,6 +5,7 @@ import com.ph.exchange.marketdata.model.InstrumentState
 import com.ph.exchange.marketdata.model.InstrumentStatusChangeRate
 import com.ph.exchange.marketdata.model.ProducerConfiguration
 import com.ph.exchange.marketdata.model.Quote
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.quarkus.logging.Log
 import io.quarkus.runtime.Startup
 import jakarta.annotation.PostConstruct
@@ -119,6 +120,7 @@ class MarketDataProducer {
         }
     }
 
+    @WithSpan("instrument.update")
     protected suspend fun updateInstrumentIfPossible() {
         val timeInMillis = measureTimeMillis {
             mutex.withLock {
@@ -163,6 +165,7 @@ class MarketDataProducer {
         return BigDecimal.valueOf(randomDouble).setScale(6, RoundingMode.HALF_DOWN)
     }
 
+    @WithSpan("quotes.update")
     private suspend fun updateQuotes() {
         val timeInMillis = measureTimeMillis {
             mutex.withLock {

@@ -17,9 +17,6 @@ create table open_orders
     constraint open_orders_order_reference_pk primary key (order_reference)
 );
 
--- create index open_orders_isin_range_direction_idx
---     on open_orders (instrument, price_key, type);
-
 create unlogged table order_matching_semaphore
 (
     order_reference text        not null,

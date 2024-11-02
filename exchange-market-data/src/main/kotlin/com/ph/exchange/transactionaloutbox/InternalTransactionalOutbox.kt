@@ -3,6 +3,7 @@ package com.ph.exchange.transactionaloutbox
 import com.ph.exchange.orders.model.events.internal.InternalEventingMessageStatus
 import com.ph.exchange.transactionaloutbox.model.TransactionalOutboxConfiguration
 import com.ph.exchange.transactionaloutbox.service.TransactionalOutboxService
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.quarkus.logging.Log
 import io.quarkus.scheduler.Scheduled
 import io.quarkus.scheduler.Scheduled.SkipPredicate
@@ -22,8 +23,9 @@ class InternalTransactionalOutbox {
     @Inject
     private lateinit var eventBus: EventBus
 
+    @WithSpan("tx-outbox")
     @Scheduled(
-        every = "PT0.1S",
+        every = "PT1S",
         identity = "transactional-outbox",
         skipExecutionIf = TransactionalOutboxSkipPredicate::class,
     )

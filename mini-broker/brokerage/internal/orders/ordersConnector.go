@@ -3,10 +3,11 @@ package orders
 import (
 	"brokerage/config"
 	"brokerage/pkg/rabbitmq"
-	"github.com/gorilla/websocket"
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/gorilla/websocket"
 )
 
 func ConnectExchangeCreateOrderApi() {
@@ -85,7 +86,7 @@ func handleConnection(connection *websocket.Conn, messageChannel chan []byte) {
 			return
 		}
 		//todo this one has to be be first connected to a consumer, for now only prints the message
-		//messageChannel <- message
-		log.Printf("received: %s", message)
+		messageChannel <- message
+		// log.Printf("received: %s", message)
 	}
 }

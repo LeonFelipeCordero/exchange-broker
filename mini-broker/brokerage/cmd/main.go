@@ -5,14 +5,27 @@ import (
 	"brokerage/internal/orders"
 	"brokerage/pkg/infra"
 	"context"
+	"errors"
 	"log"
+	"os"
+	"os/signal"
 	"sync"
 )
 
 func main() {
-	infra.SetupBrokerInfra()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+  defer stop()
 
-	ctx := context.Background()
+	infra.SetupBrokerInfra()
+  otelShutDown, err := infra.SetupTelemetr(ctx)
+  if err != nil {
+    log.Println("Error setting up telemetry")
+    return 
+  }
+  defer func() {
+    err = errors.Join(err, otelShutDown(context.Background()))
+  }()
+
 	marketDataConnector := market_data.CreateMarketDataConnector(ctx)
 	marketDataConsumer := market_data.CreateMarketDataConsumer(ctx)
 
@@ -26,3 +39,4 @@ func main() {
 	go orders.ConnectExchangeOrderUpdatesApi()
 	wg.Wait()
 }
+

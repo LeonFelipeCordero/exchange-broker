@@ -1,13 +1,11 @@
 package com.ph.exchange.transactionaloutbox.repository.entities
 
 import com.ph.exchange.transactionaloutbox.model.TransactionalOutboxInternalMessage
-import io.hypersistence.utils.hibernate.type.json.JsonType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.Type
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.OffsetDateTime
 

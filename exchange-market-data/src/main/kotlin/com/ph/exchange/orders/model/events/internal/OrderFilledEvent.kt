@@ -27,7 +27,7 @@ data class OrderFilledEvent(
                 originalPrice = order.price,
                 institution = order.institution,
                 submissionTimestamp = order.timestamp,
-                filledTimestamp = OffsetDateTime.now()
+                filledTimestamp = OffsetDateTime.now(),
             )
         }
     }

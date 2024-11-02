@@ -4,6 +4,7 @@ import com.ph.exchange.orders.model.MatchedOrder
 import com.ph.exchange.orders.model.OpenOrder
 import com.ph.exchange.orders.model.Order
 import com.ph.exchange.orders.model.OrderType
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.quarkus.logging.Log
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -28,6 +29,7 @@ class OrderMatcher {
     @Inject
     private lateinit var entityManager: EntityManager
 
+    @WithSpan("order.matching")
     @Transactional
     fun processOrder(order: Order) {
         // todo validate if instrument is tradeable

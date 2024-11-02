@@ -30,7 +30,7 @@ class OrderFilledEventListener {
             objectMapper.readValue(message, object : TypeReference<OrderFilledEvent>() {})
         val connection = openConnections.find {
             ordersConnections.keys.contains(it.id()) &&
-                    ordersConnections[it.id()] == order.institution
+                ordersConnections[it.id()] == order.institution
         }
         if (connection != null) {
             Log.info("sending message $message FILLED -> ${connection.id()}")

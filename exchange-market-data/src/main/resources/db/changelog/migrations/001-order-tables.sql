@@ -5,7 +5,6 @@
 create table orders
 (
     order_reference    text           not null,
-    -- how can I make this better? is it as easy as create and respond?
     external_reference text           not null,
     instrument         text           not null,
     nominals           numeric(15, 6) not null,

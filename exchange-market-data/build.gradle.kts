@@ -36,6 +36,10 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+    implementation("io.quarkus:quarkus-opentelemetry")
+    implementation("io.opentelemetry.instrumentation:opentelemetry-jdbc")
+    implementation("io.opentelemetry:opentelemetry-exporter-logging")
+
     testImplementation("org.testcontainers:testcontainers:1.20.2")
     testImplementation("org.testcontainers:postgresql:1.20.2")
     testImplementation("org.testcontainers:junit-jupiter:1.20.2")

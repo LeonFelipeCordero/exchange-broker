@@ -20,8 +20,6 @@ class MarketDataService {
     val scope: CoroutineScope = CoroutineScope(Dispatchers.Default + job)
     private val instrumentsConnection = mutableMapOf<String, String>()
     private val quotesConnection = mutableMapOf<String, String>()
-    //    private lateinit var instrumentChannel: Channel<Instrument>
-//    private lateinit var quoteChannel: Channel<Quote>
 
     @Inject
     private lateinit var openConnections: OpenConnections

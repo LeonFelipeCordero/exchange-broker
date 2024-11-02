@@ -1,9 +1,21 @@
 quarkus:
+  application:
+    name: exchange
   log:
     console:
       format: '%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] (%t) %s%e%n'
       json: false
       level: INFO
+  otel:
+    metrics:
+      enabled: true
+#      exporter: logging
+    exporter:
+      otlp:
+        endpoint: 'http://localhost:4317'
+#    metric:
+#      export:
+#        interval: '10000ms'
   websockets-next:
     client:
       traffic-logging:
@@ -17,6 +29,7 @@ quarkus:
     password: exchange
     jdbc:
       url: jdbc:postgresql://localhost:5432/exchange
+      telemetry: true
   hibernate-orm:
     physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
   liquibase:

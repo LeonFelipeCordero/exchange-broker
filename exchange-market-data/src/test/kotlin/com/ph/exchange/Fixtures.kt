@@ -64,7 +64,7 @@ object Fixtures {
         price: BigDecimal = BigDecimal.ONE,
         timestamp: OffsetDateTime = OffsetDateTime.now().minusHours(1),
         externalReference: String = "external_reference",
-        institution: String = "test"
+        institution: String = "test",
     ): OrderFilledEvent {
         return OrderFilledEvent(
             orderReference = orderReference,
@@ -74,7 +74,7 @@ object Fixtures {
             originalPrice = price,
             institution = institution,
             submissionTimestamp = timestamp,
-            filledTimestamp = OffsetDateTime.now()
+            filledTimestamp = OffsetDateTime.now(),
         )
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ph.exchange.orders.model.OrderSubmissionEvent
 import com.ph.exchange.orders.service.OrderMatcher
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.quarkus.logging.Log
 import io.smallrye.common.annotation.Blocking
 import jakarta.enterprise.context.ApplicationScoped
@@ -20,6 +21,7 @@ class OrderCreatedHandler {
     private lateinit var orderMatcher: OrderMatcher
 
     @Blocking
+    @WithSpan("order.processing")
     @Incoming("exchange_order_created")
     fun handler(orderCreationMessage: String) {
         val order = objectMapper.readValue(orderCreationMessage, object : TypeReference<OrderSubmissionEvent>() {})

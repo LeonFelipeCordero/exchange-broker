@@ -4,12 +4,35 @@ import (
 	"brokerage/config"
 	"brokerage/pkg/rabbitmq"
 	"context"
-	"github.com/gorilla/websocket"
 	"log"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"go.opentelemetry.io/otel/metric"
 )
+
+func init() {
+	var err error
+	instrumentPublishedCounter, err = meter.Int64Counter(
+		"instrument.message.published",
+		metric.WithDescription("Number Instruments state changes arrinving"),
+		metric.WithUnit("{count}"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	quotePublishedCounter, err = meter.Int64Counter(
+		"quote.message.published",
+		metric.WithDescription("Number of quotes arrinving"),
+		metric.WithUnit("{count}"),
+	)
+	if err != nil {
+		panic(err)
+	}
+}
 
 type MarketDataConnector struct {
 	rabbitmqSession *rabbitmq.Rabbitmq
@@ -82,12 +105,18 @@ func handleConnection(connection *websocket.Conn, messageChannel chan []byte) {
 
 func (m *MarketDataConnector) consumeInstruments(channel chan []byte) {
 	for message := range channel {
+		ctx, span := tracer.Start(m.ctx, "instrument-published")
+		instrumentPublishedCounter.Add(ctx, 1)
 		m.rabbitmqSession.PublishTopic(config.MarketDataTopic, config.InstrumentUpdatedKey, message)
+		span.End()
 	}
 }
 
 func (m *MarketDataConnector) consumeQuotes(channel chan []byte) {
 	for message := range channel {
+		ctx, span := tracer.Start(m.ctx, "quote-published")
+		quotePublishedCounter.Add(ctx, 1)
 		m.rabbitmqSession.PublishTopic(config.MarketDataTopic, config.QuoteUpdatedKey, message)
+		span.End()
 	}
 }

@@ -1,15 +1,5 @@
 version: "3.9"
 
-networks:
-  app:
-    driver: bridge
-
-volumes:
-  rabbitmq:
-    driver: local
-  postgres:
-    driver: local
-
 services:
   rabbitmq:
     image: "bitnami/rabbitmq:latest"
@@ -30,6 +20,8 @@ services:
   postgres:
     image: timescaledev/timescaledb-ha:pg16
     restart: always
+    networks:
+      - app
     ports:
       - "5432:5432"
     environment:
@@ -39,6 +31,39 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
       - ./init-db/schema-creation.sql:/docker-entrypoint-initdb.d/z_01_schema-creation.sql
+  
+  otel-lgtm:
+    image: grafana/otel-lgtm
+    restart: always
+    networks:
+      - app
+    ports:
+      - "3000:3000"
+      - "4317:4317"
+      - "4318:4318"
+      - "9090:9090"
+    environment:
+      - OTEL_METRIC_EXPORT_INTERVAL=500
+    volumes:
+      - otel-lgtm:/var/lib/grafana
+      - ./prometheus/prometheus.yaml:/otel-lgtm/prometheus.yaml
+
+  # postgres-exporter-1:
+  #   image: quay.io/prometheuscommunity/postgres-exporter
+  #   restart: always
+  #   networks:
+  #     - app
+  #   depends_on:
+  #     postgres:
+  #       condition: service_started
+  #     otel-lgtm:
+  #       condition: service_started
+  #   ports:
+  #     - "9187:9187"
+  #   environment:
+  #     - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
+  #     - DATA_SOURCE_USER=exchange
+  #     - DATA_SOURCE_PASS=exchange
 
   # exchange-market-data-producer:
   #   image: "exchange-market-data-producer"
@@ -47,3 +72,14 @@ services:
   #   ports:
   #     - "8080:8080"
 
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  rabbitmq:
+    driver: local
+  postgres:
+    driver: local
+  otel-lgtm:
+    driver: local

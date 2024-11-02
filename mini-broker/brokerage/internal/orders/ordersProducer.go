@@ -51,7 +51,8 @@ loop:
 }
 
 func (o *OrdersProducer) createOrders() {
-	ctx := context.Background()
+	ctx, span := tracer.Start(context.Background(), "orders.creation")
+  defer span.End()
 
 	quotes := o.marketDataRepository.FindAllQuotes(ctx)
 
