@@ -84,11 +84,10 @@ flowchart
 
 ### Current status
 The project is not completed and still need tuning. Some basic knowns to take in consideration are:
-1) Telemetry and observability
 2) Better query tunning
 3) Broker needs to finish the order updates part
 4) Order cancellation in both sides
-5) ...
+5) Internal bus implementation have issues to complete order fulfilled events
 
 ### Setup Infrastructure
 
