@@ -47,30 +47,68 @@ services:
     volumes:
       - otel-lgtm:/var/lib/grafana
       - ./prometheus/prometheus.yaml:/otel-lgtm/prometheus.yaml
+      - ./graphana/postgres.json:/otel-lgtm/postgres.yaml
+      - ./graphana/docker.json:/otel-lgtm/docker.yaml
+      - ./graphana/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
 
-  # postgres-exporter-1:
-  #   image: quay.io/prometheuscommunity/postgres-exporter
-  #   restart: always
-  #   networks:
-  #     - app
-  #   depends_on:
-  #     postgres:
-  #       condition: service_started
-  #     otel-lgtm:
-  #       condition: service_started
-  #   ports:
-  #     - "9187:9187"
-  #   environment:
-  #     - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
-  #     - DATA_SOURCE_USER=exchange
-  #     - DATA_SOURCE_PASS=exchange
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    restart: always
+    networks:
+      - app
+    depends_on:
+      postgres:
+        condition: service_started
+      otel-lgtm:
+        condition: service_started
+    ports:
+      - "9187:9187"
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
+      - DATA_SOURCE_USER=exchange
+      - DATA_SOURCE_PASS=exchange
 
-  # exchange-market-data-producer:
-  #   image: "exchange-market-data-producer"
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "8080:8080"
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: monitoring_node_exporter
+    restart: unless-stopped
+    networks:
+      - app
+    ports:
+      - "9100:9100"
+    expose:
+      - 9100
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    container_name: cadvisor
+    restart: always
+    networks:
+      - app
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+
+  exchange:
+    image: "exchange"
+    networks:
+      - app
+    ports:
+      - "8081:8081"
+
+  broker:
+    image: "broker"
+    networks:
+      - app
+    environment:
+      - ENVIRONMENT=dev
 
 networks:
   app:
@@ -83,3 +121,4 @@ volumes:
     driver: local
   otel-lgtm:
     driver: local
+

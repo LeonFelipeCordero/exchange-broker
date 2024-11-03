@@ -1,0 +1,12 @@
+exchange:
+  websocket: "ws://localhost:8081/ws"
+rabbitmq:
+  uri: "amqp://market_data:12345@localhost:5672/"
+postgresql:
+  host: localhost
+  port: "5432"
+  user: broker
+  password: broker
+  database: broker
+telemetry:
+  host: "localhost:4318"

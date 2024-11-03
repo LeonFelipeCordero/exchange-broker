@@ -1,0 +1,13 @@
+exchange:
+  websocket: "ws://exchange:8081/ws"
+rabbitmq:
+  uri: "amqp://market_data:12345@rabbitmq:5672/"
+postgresql:
+  host: postgres
+  port: "5432"
+  user: broker
+  password: broker
+  database: broker
+telemetry:
+  host: "otel-lgtm:4318"
+

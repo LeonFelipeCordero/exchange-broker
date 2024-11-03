@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'Postgres'
+    type: file
+    options:
+      path: /otel-lgtm/postgres.json
+      foldersFromFilesStructure: false
+  - name: 'Docker'
+    type: file
+    options:
+      path: /otel-lgtm/docker.json
+      foldersFromFilesStructure: false

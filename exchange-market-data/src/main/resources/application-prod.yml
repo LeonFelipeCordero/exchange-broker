@@ -1,0 +1,86 @@
+quarkus:
+  application:
+    name: exchange
+  log:
+    console:
+      format: '%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] (%t) %s%e%n'
+      json: false
+      level: INFO
+  otel:
+    metrics:
+      enabled: true
+    exporter:
+      otlp:
+        endpoint: 'http://otel-lgtm:4317'
+  websockets-next:
+    client:
+      traffic-logging:
+        enabled: true
+    server:
+      traffic-logging:
+        enabled: true
+  datasource:
+    db-kind: postgresql
+    username: exchange
+    password: exchange
+    jdbc:
+      url: jdbc:postgresql://postgres:5432/exchange
+      telemetry: true
+  hibernate-orm:
+    physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+  liquibase:
+    migrate-at-start: true
+    change-log: db/changelog/db.changelog.yaml
+  http:
+    port: 8081
+
+rabbitmq-host: rabbitmq
+rabbitmq-port: 5672
+rabbitmq-username: market_data
+rabbitmq-password: 12345
+
+mp:
+  messaging:
+    outgoing:
+      exchange_order_updates:
+        connector: smallrye-rabbitmq
+        exchange:
+          name: exchange_orders_topic
+          declare: false
+    incoming:
+      exchange_order_created:
+        connector: smallrye-rabbitmq
+        queue:
+          name: exchange_order_created_queue
+          routing-keys: order.created
+          declare: false
+        exchange:
+          name: exchange_orders_topic
+          routing-keys: order.created
+          declare: false
+
+application:
+  producer:
+    with-streaming: true
+    number-of-instruments: 10
+    instrument-change-rate: LOW
+    instruments-change-frequency-in-millis: 1000 # 500
+    quotes-generation-frequency-in-millis: 1000 # 200
+    stream-termination-after-millis: 0
+    countries:
+      - country-code: MX
+        currency: MXN
+      - country-code: DE
+        currency: EUR
+      - country-code: US
+        currency: USD
+      - country-code: GB
+        currency: GBP
+      - country-code: ES
+        currency: EUR
+      - country-code: NL
+        currency: EUR
+      - country-code: FR
+        currency: EUR
+  transactional-outbox:
+    enabled: true
