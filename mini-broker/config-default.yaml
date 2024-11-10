@@ -9,4 +9,6 @@ postgresql:
   password: broker
   database: broker
 telemetry:
-  host: "localhost:4318"
+  host: "localhost:4317"
+  path: "/"
+  auth: "Basic dGVzdEBlbWFpbC5jb206Q29tcGxleHBhc3MjMTIz"

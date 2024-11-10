@@ -6,7 +6,7 @@ enum class OrderEventTypes {
     ORDER_CANCELLED,
 }
 
-enum class InternalEventingMessageStatus() {
+enum class InternalEventingMessageStatus {
     OK,
     ERROR_HANDLED,
 }

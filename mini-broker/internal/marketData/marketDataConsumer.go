@@ -41,9 +41,9 @@ type MarketDataConsumer struct {
 	ctx                  context.Context
 }
 
-func CreateMarketDataConsumer(ctx context.Context) MarketDataConsumer {
+func CreateMarketDataConsumer(ctx context.Context, rabbitmqSession *rabbitmq.Rabbitmq) MarketDataConsumer {
 	return MarketDataConsumer{
-		rabbitmqSession:      rabbitmq.CreateRabbitMQConnection(),
+		rabbitmqSession:      rabbitmqSession,
 		marketDataRepository: storage.CreateMarketDataRepository(),
 		ctx:                  ctx,
 	}

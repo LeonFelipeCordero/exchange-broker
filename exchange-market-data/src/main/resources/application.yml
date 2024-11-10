@@ -13,6 +13,9 @@ quarkus:
       enabled: true
     exporter:
       otlp:
+#        headers:
+#          - "Authorization=Basic dGVzdEBlbWFpbC5jb206Q29tcGxleHBhc3MjMTIz"
+#        protocol: 'http/protobuf'
         endpoint: 'http://localhost:4317'
   websockets-next:
     client:
@@ -28,6 +31,10 @@ quarkus:
     jdbc:
       url: jdbc:postgresql://localhost:5432/exchange
       telemetry: true
+      initial-size: 2
+      min-size: 2
+      max-size: 60
+      extended-leak-report: true
   hibernate-orm:
     physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
   liquibase:
@@ -35,6 +42,9 @@ quarkus:
     change-log: db/changelog/db.changelog.yaml
   http:
     port: 8081
+  scheduler:
+    tracing:
+      enabled: true
 
 rabbitmq-host: localhost
 rabbitmq-port: 5672
@@ -59,6 +69,16 @@ mp:
         exchange:
           name: exchange_orders_topic
           routing-keys: order.created
+          declare: false
+      exchange_order_filled:
+        connector: smallrye-rabbitmq
+        queue:
+          name: exchange_order_filled_queue
+          routing-keys: order.filled
+          declare: false
+        exchange:
+          name: exchange_orders_topic
+          routing-keys: order.filled
           declare: false
 
 application:

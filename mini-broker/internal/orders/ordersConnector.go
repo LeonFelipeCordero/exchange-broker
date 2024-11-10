@@ -12,23 +12,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ConnectExchangeCreateOrderApi() {
-	rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
+func ConnectExchangeCreateOrderApi(rabbitmqSession *rabbitmq.Rabbitmq) {
 	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderCreatedQueue)
 
 	c := connectToWs("orders/submission")
-	// host := "ws://localhost:8081/ws/orders/submission"
-	// log.Printf("connecting to %s", host)
-
-	// c, _, err := websocket.DefaultDialer.Dial(host, nil)
-	// if err != nil {
-	// 	log.Fatal("dial:", err)
-	// }
-
-	// interrupt := make(chan os.Signal, 1)
-	// signal.Notify(interrupt, os.Interrupt)
-
-	// go handeInterruptSignal(c, interrupt)
 
 	for message := range queueChannel {
 		err := c.WriteMessage(websocket.TextMessage, message.Body)
@@ -38,23 +25,11 @@ func ConnectExchangeCreateOrderApi() {
 	}
 }
 
-func ConnectExchangeOrderUpdatesApi() {
+func ConnectExchangeOrderUpdatesApi(rabbitmqSession *rabbitmq.Rabbitmq) {
 	//rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
 	//queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
 
 	c := connectToWs("orders/update/" + config.InstitutionId)
-	// host := "ws://localhost:8081/ws/orders/update/" + config.InstitutionId
-	// log.Printf("connecting to %s", host)
-
-	// c, _, err := websocket.DefaultDialer.Dial(host, nil)
-	// if err != nil {
-	// 	log.Fatal("dial:", err)
-	// }
-
-	// interrupt := make(chan os.Signal, 1)
-	// signal.Notify(interrupt, os.Interrupt)
-
-	// go handeInterruptSignal(c, interrupt)
 
 	var messageChannel = make(chan []byte)
 	go handleConnection(c, messageChannel)
@@ -69,7 +44,6 @@ func ConnectExchangeOrderUpdatesApi() {
 
 func connectToWs(endpoint string) *websocket.Conn {
 	host := fmt.Sprintf("%s/%s", viper.Get("exchange.websocket"), endpoint)
-	// host := "ws://localhost:8081/ws/orders/update/" + config.InstitutionId
 	log.Printf("connecting to %s", host)
 
 	c, _, err := websocket.DefaultDialer.Dial(host, nil)
@@ -106,7 +80,7 @@ func handleConnection(connection *websocket.Conn, messageChannel chan []byte) {
 			return
 		}
 		//todo this one has to be be first connected to a consumer, for now only prints the message
+		log.Printf("received: %s", message)
 		messageChannel <- message
-		// log.Printf("received: %s", message)
 	}
 }

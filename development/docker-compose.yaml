@@ -16,9 +16,10 @@ services:
       - RABBITMQ_LOAD_DEFINITIONS=yes
     volumes:
       - "./rabbitmq/defenitions.json:/etc/rabbitmq/defenitions.json"
+      - rabbitmq:/bitnami/rabbitmq/mnesia
 
   postgres:
-    image: timescaledev/timescaledb-ha:pg16
+    image: timescale/timescaledb-ha:pg16
     restart: always
     networks:
       - app
@@ -29,86 +30,107 @@ services:
       - POSTGRES_USER=exchange
       - POSTGRES_PASSWORD=exchange
     volumes:
-      - postgres:/var/lib/postgresql/data
-      - ./init-db/schema-creation.sql:/docker-entrypoint-initdb.d/z_01_schema-creation.sql
+      - ./init-db/broker-user.sql:/docker-entrypoint-initdb.d/z_01_broker-user.sql
+      - ./init-db/metrics-user.sql:/docker-entrypoint-initdb.d/z_02_metrics-user.sql
+      - postgres:/home/postgres/pgdata/data
   
-  otel-lgtm:
-    image: grafana/otel-lgtm
-    restart: always
-    networks:
-      - app
-    ports:
-      - "3000:3000"
-      - "4317:4317"
-      - "4318:4318"
-      - "9090:9090"
-    environment:
-      - OTEL_METRIC_EXPORT_INTERVAL=500
-    volumes:
-      - otel-lgtm:/var/lib/grafana
-      - ./prometheus/prometheus.yaml:/otel-lgtm/prometheus.yaml
-      - ./graphana/postgres.json:/otel-lgtm/postgres.yaml
-      - ./graphana/docker.json:/otel-lgtm/docker.yaml
-      - ./graphana/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
+  # openobserve:
+  #   image: public.ecr.aws/zinclabs/openobserve:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     ZO_ROOT_USER_EMAIL: "test@email.com"
+  #     ZO_ROOT_USER_PASSWORD: "12345"
+  #   ports:
+  #     - "5080:5080"
+  #   volumes:
+  #     - openobserve:/data
 
-  postgres-exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter
-    restart: always
-    networks:
-      - app
-    depends_on:
-      postgres:
-        condition: service_started
-      otel-lgtm:
-        condition: service_started
-    ports:
-      - "9187:9187"
-    environment:
-      - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
-      - DATA_SOURCE_USER=exchange
-      - DATA_SOURCE_PASS=exchange
+  # otel-lgtm:
+  #   image: grafana/otel-lgtm
+  #   restart: always
+  #   networks:
+  #     - app
+  #   ports:
+  #     - "3000:3000"
+  #     - "4317:4317"
+  #     - "4318:4318"
+  #     - "9090:9090"
+  #     - "3100:3100" 
+  #   environment:
+  #     - OTEL_METRIC_EXPORT_INTERVAL=500
+  #   volumes:
+  #     - otel-lgtm:/var/lib/grafana
+  #     - ./prometheus/prometheus.yaml:/otel-lgtm/prometheus.yaml
+  #     - ./graphana/postgres.json:/otel-lgtm/postgres.yaml
+  #     - ./graphana/docker.json:/otel-lgtm/docker.yaml
+  #     - ./graphana/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
 
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: monitoring_node_exporter
-    restart: unless-stopped
-    networks:
-      - app
-    ports:
-      - "9100:9100"
-    expose:
-      - 9100
+  # postgres-exporter:
+  #   image: quay.io/prometheuscommunity/postgres-exporter
+  #   restart: always
+  #   networks:
+  #     - app
+  #   depends_on:
+  #     postgres:
+  #       condition: service_started
+  #     otel-lgtm:
+  #       condition: service_started
+  #   ports:
+  #     - "9187:9187"
+  #   environment:
+  #     - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
+  #     - DATA_SOURCE_USER=exchange
+  #     - DATA_SOURCE_PASS=exchange
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.51.0
-    container_name: cadvisor
-    restart: always
-    networks:
-      - app
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    ports:
-      - "8080:8080"
-    expose:
-      - 8080
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: monitoring_node_exporter
+  #   restart: unless-stopped
+  #   networks:
+  #     - app
+  #   ports:
+  #     - "9100:9100"
+  #   expose:
+  #     - 9100
 
-  exchange:
-    image: "exchange"
-    networks:
-      - app
-    ports:
-      - "8081:8081"
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.51.0
+  #   container_name: cadvisor
+  #   restart: always
+  #   networks:
+  #     - app
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #   ports:
+  #     - "8080:8080"
+  #   expose:
+  #     - 8080
 
-  broker:
-    image: "broker"
-    networks:
-      - app
-    environment:
-      - ENVIRONMENT=dev
+  # exchange:
+  #   image: "exchange"
+  #   networks:
+  #     - app
+  #   ports:
+  #     - "8081:8081"
+  #   logging:
+  #     driver: loki
+  #     options:
+  #       loki-url: http://otel-lgtm:3100/loki/api/v1/push
+
+  # broker:
+  #   image: "broker"
+  #   networks:
+  #     - app
+  #   environment:
+  #     - ENVIRONMENT=dev
+  #   logging:
+  #     driver: loki
+  #     options:
+  #       loki-url: http://otel-lgtm:3100/loki/api/v1/push
 
 networks:
   app:
@@ -116,9 +138,6 @@ networks:
 
 volumes:
   rabbitmq:
-    driver: local
   postgres:
-    driver: local
   otel-lgtm:
-    driver: local
-
+  openobserve:

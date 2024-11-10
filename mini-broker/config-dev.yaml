@@ -9,5 +9,6 @@ postgresql:
   password: broker
   database: broker
 telemetry:
-  host: "otel-lgtm:4318"
-
+  host: "192.168.178.22:4317"
+  path: "/"
+  auth: "Basic dGVzdEBlbWFpbC5jb206Q29tcGxleHBhc3MjMTIz"

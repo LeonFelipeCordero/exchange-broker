@@ -9,9 +9,14 @@ quarkus:
   otel:
     metrics:
       enabled: true
+    logs:
+      enabled: true
     exporter:
       otlp:
-        endpoint: 'http://otel-lgtm:4317'
+#        headers:
+#          - "Authorization=Basic dGVzdEBlbWFpbC5jb206Q29tcGxleHBhc3MjMTIz"
+        protocol: 'http/protobuf'
+        endpoint: 'http://192.168.178.22:4317'
   websockets-next:
     client:
       traffic-logging:
@@ -26,6 +31,10 @@ quarkus:
     jdbc:
       url: jdbc:postgresql://postgres:5432/exchange
       telemetry: true
+      initial-size: 2
+      min-size: 2
+      max-size: 60
+      extended-leak-report: true
   hibernate-orm:
     physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
   liquibase:
@@ -33,6 +42,9 @@ quarkus:
     change-log: db/changelog/db.changelog.yaml
   http:
     port: 8081
+  scheduler:
+    tracing:
+      enabled: true
 
 rabbitmq-host: rabbitmq
 rabbitmq-port: 5672

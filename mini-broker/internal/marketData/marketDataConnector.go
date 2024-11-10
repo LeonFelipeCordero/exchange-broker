@@ -41,9 +41,9 @@ type MarketDataConnector struct {
 	ctx             context.Context
 }
 
-func CreateMarketDataConnector(ctx context.Context) MarketDataConnector {
+func CreateMarketDataConnector(ctx context.Context, rabbitmqSession *rabbitmq.Rabbitmq) MarketDataConnector {
 	return MarketDataConnector{
-		rabbitmqSession: rabbitmq.CreateRabbitMQConnection(),
+		rabbitmqSession: rabbitmqSession,
 		ctx:             ctx,
 	}
 }
@@ -59,7 +59,6 @@ func (m *MarketDataConnector) Connect() {
 
 func (m *MarketDataConnector) connectToWs(endpoint string) chan []byte {
 	host := fmt.Sprintf("%s/%s", viper.Get("exchange.websocket"), endpoint)
-	// host := "ws://localhost:8081/ws/" + endpoint
 	log.Printf("connecting to %s", host)
 
 	c, _, err := websocket.DefaultDialer.Dial(host, nil)

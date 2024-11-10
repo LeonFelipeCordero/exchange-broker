@@ -21,7 +21,7 @@ class OrderCreatedHandler {
     private lateinit var orderMatcher: OrderMatcher
 
     @Blocking
-    @WithSpan("order.processing")
+    @WithSpan("order_processing")
     @Incoming("exchange_order_created")
     fun handler(orderCreationMessage: String) {
         val order = objectMapper.readValue(orderCreationMessage, object : TypeReference<OrderSubmissionEvent>() {})

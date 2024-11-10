@@ -14,7 +14,7 @@ class InstrumentsWebSocketApi {
     @Inject
     private lateinit var marketDataService: MarketDataService
 
-    @WithSpan("instruments.connection")
+    @WithSpan("instruments_connection")
     @OnOpen(broadcast = true)
     fun onOpen(webSocketConnection: WebSocketConnection) {
         Log.info("Connection open in instruments endpoint with id ${webSocketConnection.id()}")

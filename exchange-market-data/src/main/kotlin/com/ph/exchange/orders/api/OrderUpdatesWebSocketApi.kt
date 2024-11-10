@@ -1,6 +1,6 @@
 package com.ph.exchange.orders.api
 
-import com.ph.exchange.orders.service.OrderFilledEventListener
+import com.ph.exchange.orders.handler.OrderFilledHandler
 import io.quarkus.logging.Log
 import io.quarkus.websockets.next.OnClose
 import io.quarkus.websockets.next.OnOpen
@@ -14,7 +14,7 @@ class OrderUpdatesWebSocketApi {
     val institutionPath = "institution"
 
     @Inject
-    private lateinit var orderFilledEventListener: OrderFilledEventListener
+    private lateinit var orderFilledHandler: OrderFilledHandler
 
     @OnTextMessage
     fun onMessage(orderMessage: String) {
@@ -24,12 +24,12 @@ class OrderUpdatesWebSocketApi {
     fun onOpen(webSocketConnection: WebSocketConnection) {
         Log.info("Connection open in order updates endpoint with id ${webSocketConnection.id()}")
         val institution = webSocketConnection.pathParam(institutionPath)
-        orderFilledEventListener.addConnection(webSocketConnection.id(), institution)
+        orderFilledHandler.addConnection(webSocketConnection.id(), institution)
     }
 
     @OnClose
     fun onClose(webSocketConnection: WebSocketConnection) {
         Log.info("Connection ${webSocketConnection.id()} close")
-        orderFilledEventListener.removeConnection(webSocketConnection.id())
+        orderFilledHandler.removeConnection(webSocketConnection.id())
     }
 }

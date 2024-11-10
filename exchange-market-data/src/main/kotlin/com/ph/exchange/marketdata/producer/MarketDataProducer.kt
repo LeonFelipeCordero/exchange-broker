@@ -120,7 +120,7 @@ class MarketDataProducer {
         }
     }
 
-    @WithSpan("instrument.update")
+    @WithSpan("instrument_update")
     protected suspend fun updateInstrumentIfPossible() {
         val timeInMillis = measureTimeMillis {
             mutex.withLock {
@@ -165,8 +165,8 @@ class MarketDataProducer {
         return BigDecimal.valueOf(randomDouble).setScale(6, RoundingMode.HALF_DOWN)
     }
 
-    @WithSpan("quotes.update")
-    private suspend fun updateQuotes() {
+    @WithSpan("quotes_update")
+    protected suspend fun updateQuotes() {
         val timeInMillis = measureTimeMillis {
             mutex.withLock {
                 for (quote in quotes.values) {

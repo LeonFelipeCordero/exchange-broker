@@ -8,6 +8,7 @@ import io.quarkus.websockets.next.OnOpen
 import io.quarkus.websockets.next.OnTextMessage
 import io.quarkus.websockets.next.WebSocket
 import io.quarkus.websockets.next.WebSocketConnection
+import io.smallrye.common.annotation.Blocking
 import io.smallrye.reactive.messaging.rabbitmq.OutgoingRabbitMQMetadata
 import jakarta.annotation.PostConstruct
 import jakarta.inject.Inject
@@ -25,6 +26,7 @@ class OrderSubmissionWebSocketApi {
             .withTimestamp(ZonedDateTime.now())
             .build()
 
+    @Inject
     @Channel("exchange_order_updates")
     private lateinit var emitter: Emitter<String>
 
@@ -41,6 +43,7 @@ class OrderSubmissionWebSocketApi {
             .build()
     }
 
+    @Blocking
     @OnTextMessage
     fun onMessage(orderMessage: String) {
         orderSubmissionCounter.add(1)

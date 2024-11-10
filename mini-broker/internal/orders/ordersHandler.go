@@ -8,8 +8,6 @@ import (
 	"go.opentelemetry.io/otel/metric"
 )
 
-var rabbitmqSession *rabbitmq.Rabbitmq
-
 func init() {
 	var err error
 	orderCreatedCounter, err = meter.Int64Counter(
@@ -32,9 +30,7 @@ func init() {
 
 }
 
-func StartRandomOrderCreation(ctx context.Context) {
-	rabbitmqSession = rabbitmq.CreateRabbitMQConnection()
-
+func StartRandomOrderCreation(ctx context.Context, rabbitmqSession *rabbitmq.Rabbitmq) {
 	ordersChannel := make(chan []byte)
 	ordersProducer := CreateOrderProducer(ordersChannel)
 	go ordersProducer.StartStreaming(ctx)
@@ -44,12 +40,12 @@ func StartRandomOrderCreation(ctx context.Context) {
 		case <-ctx.Done():
 			return
 		case orderBytes := <-ordersChannel:
-			hanldeOrderCreated(ctx, orderBytes)
+			hanldeOrderCreated(ctx, orderBytes, rabbitmqSession)
 		}
 	}
 }
 
-func hanldeOrderCreated(ctx context.Context, orderBytes []byte) {
+func hanldeOrderCreated(ctx context.Context, orderBytes []byte, rabbitmqSession *rabbitmq.Rabbitmq) {
 	_, span := tracer.Start(ctx, "order.created")
 	orderCreatedCounter.Add(ctx, 1)
 	rabbitmqSession.PublishTopic(config.BrokerOrdersTopic, config.BrokerOrderCreatedKey, orderBytes)

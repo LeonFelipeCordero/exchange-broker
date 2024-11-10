@@ -24,4 +24,4 @@ const (
 )
 
 // OrderTicker original value 100ms
-var OrderTicker = time.Tick(5000 * time.Millisecond)
+var OrderTicker = time.Tick(1000 * time.Millisecond)

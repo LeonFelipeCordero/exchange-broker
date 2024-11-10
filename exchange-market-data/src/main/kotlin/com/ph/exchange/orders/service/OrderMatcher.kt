@@ -29,7 +29,7 @@ class OrderMatcher {
     @Inject
     private lateinit var entityManager: EntityManager
 
-    @WithSpan("order.matching")
+    @WithSpan("order_matching")
     @Transactional
     fun processOrder(order: Order) {
         // todo validate if instrument is tradeable

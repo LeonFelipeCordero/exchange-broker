@@ -8,6 +8,7 @@ import (
 	"mini-broker/internal/marketData"
 	"mini-broker/internal/orders"
 	"mini-broker/pkg/infra"
+	"mini-broker/pkg/rabbitmq"
 	"os"
 	"os/signal"
 	"sync"
@@ -21,7 +22,7 @@ func main() {
 
 	setupConfiguration()
 
-	otelShutDown, err := infra.SetupTelemetr(ctx)
+	otelShutDown, err := infra.SetupTelemetry(ctx)
 	if err != nil {
 		log.Println("Error setting up telemetry")
 		return
@@ -30,17 +31,19 @@ func main() {
 		err = errors.Join(err, otelShutDown(context.Background()))
 	}()
 
-	marketDataConnector := marketData.CreateMarketDataConnector(ctx)
-	marketDataConsumer := marketData.CreateMarketDataConsumer(ctx)
+  rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
+
+	marketDataConnector := marketData.CreateMarketDataConnector(ctx, rabbitmqSession)
+	marketDataConsumer := marketData.CreateMarketDataConsumer(ctx, rabbitmqSession)
 
 	var wg sync.WaitGroup
 	wg.Add(5)
 	log.Println("initializing market data and orders consumers...")
 	go marketDataConnector.Connect()
 	go marketDataConsumer.Connect()
-	go orders.StartRandomOrderCreation(ctx)
-	go orders.ConnectExchangeCreateOrderApi()
-	go orders.ConnectExchangeOrderUpdatesApi()
+	go orders.StartRandomOrderCreation(ctx, rabbitmqSession)
+	go orders.ConnectExchangeCreateOrderApi(rabbitmqSession)
+	go orders.ConnectExchangeOrderUpdatesApi(rabbitmqSession)
 	wg.Wait()
 }
 
