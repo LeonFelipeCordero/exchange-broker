@@ -74,7 +74,7 @@ mp:
 application:
   producer:
     with-streaming: true
-    number-of-instruments: 10
+    number-of-instruments: 100
     instrument-change-rate: LOW
     instruments-change-frequency-in-millis: 1000 # 500
     quotes-generation-frequency-in-millis: 1000 # 200

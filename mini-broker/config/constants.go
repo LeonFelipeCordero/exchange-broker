@@ -1,7 +1,5 @@
 package config
 
-import "time"
-
 const (
 	MarketDataTopic      = "broker_market_data_topic"
 	InstrumentsQueue     = "broker_instrument_updated_queue"
@@ -16,12 +14,5 @@ const (
 	BrokerOrderCreatedQueue   = "broker_order_created_queue"
 	BrokerOrderFilledQueue    = "broker_order_filled_queue"
 	BrokerOrderCancelledQueue = "broker_order_cancelled_queue"
-
-	// TradersSize should be 100
-	TradersSize = 5
-	// InstitutionId Institution ID to add in orders
-	InstitutionId = "test_institution_12345"
 )
 
-// OrderTicker original value 100ms
-var OrderTicker = time.Tick(1000 * time.Millisecond)

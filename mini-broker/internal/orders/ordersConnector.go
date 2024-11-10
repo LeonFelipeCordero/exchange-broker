@@ -29,7 +29,8 @@ func ConnectExchangeOrderUpdatesApi(rabbitmqSession *rabbitmq.Rabbitmq) {
 	//rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
 	//queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
 
-	c := connectToWs("orders/update/" + config.InstitutionId)
+  institutionId := viper.GetString("application.intitution-id")
+	c := connectToWs("orders/update/" + institutionId)
 
 	var messageChannel = make(chan []byte)
 	go handleConnection(c, messageChannel)

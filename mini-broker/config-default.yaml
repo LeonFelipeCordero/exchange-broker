@@ -12,3 +12,8 @@ telemetry:
   host: "localhost:4317"
   path: "/"
   auth: "Basic dGVzdEBlbWFpbC5jb206Q29tcGxleHBhc3MjMTIz"
+
+application:
+  number-of-traders: 5
+  institution-id: test_institution_12345
+  order-ticker: 1000

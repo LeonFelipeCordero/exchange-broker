@@ -3,15 +3,16 @@ package orders
 import (
 	"context"
 	"encoding/json"
-	"github.com/google/uuid"
 	"log"
 	"math"
 	"math/rand"
-	"mini-broker/config"
 	domain "mini-broker/domain/model"
 	"mini-broker/pkg/cache"
 	"mini-broker/pkg/storage"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/spf13/viper"
 )
 
 type OrdersProducer struct {
@@ -21,8 +22,9 @@ type OrdersProducer struct {
 }
 
 func CreateOrderProducer(ordersChannel chan []byte) OrdersProducer {
+  numberOfTraders := viper.GetInt("application.number-of-traders")
 	traders := cache.NewSliceStore()
-	for i := 0; i < config.TradersSize; i++ {
+	for i := 0; i < numberOfTraders; i++ {
 		id, _ := uuid.NewUUID()
 		traders.Push(id.String())
 	}
@@ -39,12 +41,14 @@ func (o *OrdersProducer) StartStreaming(ctx context.Context) {
 }
 
 func (o *OrdersProducer) startTicker(ctx context.Context) {
+  orderTickerConfig := viper.GetInt("application.order-ticker")
+  orderTicker := time.Tick(time.Duration(orderTickerConfig) * time.Millisecond)
 loop:
 	for {
 		select {
 		case <-ctx.Done():
 			break loop
-		case <-config.OrderTicker:
+		case <-orderTicker:
 			go o.createOrders()
 		}
 	}
@@ -56,11 +60,13 @@ func (o *OrdersProducer) createOrders() {
 
 	quotes := o.marketDataRepository.FindAllQuotes(ctx)
 
-	// change how to randomise the orders
-	log.Printf("creating orders for %d instruments", len(quotes))
+  numberOfTraders := viper.GetInt("application.number-of-traders")
+  institutionId := viper.GetString("application.intitution-id")
+
+  log.Printf("creating orders for %d instruments", len(quotes))
 	for _, quote := range quotes {
 		for i := 0; i < 5; i++ {
-			random := rand.Intn(config.TradersSize)
+			random := rand.Intn(numberOfTraders)
 			user := o.traders.Get(random)
 
 			price := randomisePrice(quote.Price)
@@ -75,7 +81,7 @@ func (o *OrdersProducer) createOrders() {
 				Amount:      amount,
 				Type:        randomiseType(),
 				Trader:      user,
-				Institution: config.InstitutionId,
+				Institution: institutionId,
 				Currency:    quote.Currency,
 				Timestamp:   time.Now(),
 			}
