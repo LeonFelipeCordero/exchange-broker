@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ph.exchange.orders.model.events.internal.OrderFilledEvent
 import io.opentelemetry.instrumentation.annotations.WithSpan
+import io.quarkus.logging.Log
 import io.quarkus.websockets.next.OpenConnections
 import io.smallrye.common.annotation.Blocking
 import jakarta.enterprise.context.ApplicationScoped
@@ -25,10 +26,12 @@ class OrderFilledHandler {
     @Incoming("exchange_order_filled")
     fun consume(message: String) {
         val order = objectMapper.readValue(message, object : TypeReference<OrderFilledEvent>() {})
-        val connection = openConnections.find {
+        openConnections.find {
             ordersConnections.keys.contains(it.id()) && ordersConnections[it.id()] == order.institution
+        }?.run {
+            Log.info("Got message to publish to institution: ${order.institution}")
+            this.sendTextAndAwait(message)
         }
-        connection?.sendTextAndAwait(message)
     }
 
     fun addConnection(wsConnId: String, institution: String) {

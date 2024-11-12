@@ -4,7 +4,7 @@ import com.ph.exchange.orders.repository.MatchedOrderRepository
 import com.ph.exchange.orders.repository.OpenOrderRepository
 import com.ph.exchange.orders.repository.OpenOrderSemaphoreRepository
 import com.ph.exchange.orders.repository.OrderRepository
-import com.ph.exchange.transactionaloutbox.repository.TransactionalOutboxInternalMessageRepository
+import com.ph.exchange.transactionaloutbox.repository.TransactionalOutboxMessageRepository
 import io.quarkus.test.common.QuarkusTestResource
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
@@ -26,13 +26,13 @@ open class IntegrationTestBase {
     protected lateinit var matchedOrderRepository: MatchedOrderRepository
 
     @Inject
-    protected lateinit var transactionalOutboxInternalMessageRepository: TransactionalOutboxInternalMessageRepository
+    protected lateinit var transactionalOutboxMessageRepository: TransactionalOutboxMessageRepository
 
     protected fun clean() {
         matchedOrderRepository.deleteAll()
         openOrderRepository.deleteAll()
         openOrderSemaphoreRepository.deleteAll()
         orderRepository.deleteAll()
-        transactionalOutboxInternalMessageRepository.deleteAll()
+        transactionalOutboxMessageRepository.deleteAll()
     }
 }

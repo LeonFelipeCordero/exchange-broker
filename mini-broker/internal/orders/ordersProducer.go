@@ -22,7 +22,7 @@ type OrdersProducer struct {
 }
 
 func CreateOrderProducer(ordersChannel chan []byte) OrdersProducer {
-  numberOfTraders := viper.GetInt("application.number-of-traders")
+	numberOfTraders := viper.GetInt("application.number-of-traders")
 	traders := cache.NewSliceStore()
 	for i := 0; i < numberOfTraders; i++ {
 		id, _ := uuid.NewUUID()
@@ -41,8 +41,8 @@ func (o *OrdersProducer) StartStreaming(ctx context.Context) {
 }
 
 func (o *OrdersProducer) startTicker(ctx context.Context) {
-  orderTickerConfig := viper.GetInt("application.order-ticker")
-  orderTicker := time.Tick(time.Duration(orderTickerConfig) * time.Millisecond)
+	orderTickerConfig := viper.GetInt("application.order-ticker")
+	orderTicker := time.Tick(time.Duration(orderTickerConfig) * time.Millisecond)
 loop:
 	for {
 		select {
@@ -60,10 +60,10 @@ func (o *OrdersProducer) createOrders() {
 
 	quotes := o.marketDataRepository.FindAllQuotes(ctx)
 
-  numberOfTraders := viper.GetInt("application.number-of-traders")
-  institutionId := viper.GetString("application.intitution-id")
+	numberOfTraders := viper.GetInt("application.number-of-traders")
+	institutionId := viper.GetString("application.institution-id")
 
-  log.Printf("creating orders for %d instruments", len(quotes))
+	log.Printf("creating orders for %d instruments", len(quotes))
 	for _, quote := range quotes {
 		for i := 0; i < 5; i++ {
 			random := rand.Intn(numberOfTraders)
@@ -84,6 +84,7 @@ func (o *OrdersProducer) createOrders() {
 				Institution: institutionId,
 				Currency:    quote.Currency,
 				Timestamp:   time.Now(),
+				Filled:      false,
 			}
 			encoded, _ := json.Marshal(order)
 			o.ordersChannel <- encoded

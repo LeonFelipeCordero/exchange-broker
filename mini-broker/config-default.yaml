@@ -16,4 +16,4 @@ telemetry:
 application:
   number-of-traders: 5
   institution-id: test_institution_12345
-  order-ticker: 1000
+  order-ticker: 2000

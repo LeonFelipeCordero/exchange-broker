@@ -44,7 +44,7 @@ class InternalTransactionalOutboxTest : IntegrationTestBase() {
         transactionalOutbox.task()
 
         entityManager.clear()
-        val availableMessages = transactionalOutboxInternalMessageRepository.findAll().list()
+        val availableMessages = transactionalOutboxMessageRepository.findAll().list()
         assertThat(availableMessages).hasSize(1)
         assertThat(availableMessages.first().sent).isTrue()
         assertThat(availableMessages.first().sentAt).isNotNull()

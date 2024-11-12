@@ -2,21 +2,34 @@ version: "3.9"
 
 services:
   rabbitmq:
-    image: "bitnami/rabbitmq:latest"
+    image: "rabbitmq:4.0.3-management"
     networks:
       - app
     ports:
       - "15672:15672"
       - "5672:5672"
     environment:
-      - RABBITMQ_PASSWORD=12345
-      - RABBITMQ_USERNAME=market_data
       - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
-      - RABBITMQ_DEFINITIONS_FILE=/etc/rabbitmq/defenitions.json
-      - RABBITMQ_LOAD_DEFINITIONS=yes
     volumes:
-      - "./rabbitmq/defenitions.json:/etc/rabbitmq/defenitions.json"
+      - "./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf"
+      - "./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json"
       - rabbitmq:/bitnami/rabbitmq/mnesia
+
+    # image: "bitnami/rabbitmq:latest"
+    # networks:
+    #   - app
+    # ports:
+    #   - "15672:15672"
+    #   - "5672:5672"
+    # environment:
+    #   - RABBITMQ_PASSWORD=12345
+    #   - RABBITMQ_USERNAME=market_data
+    #   - RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS=true
+    #   - RABBITMQ_DEFINITIONS_FILE=/etc/rabbitmq/defenitions.json
+    #   - RABBITMQ_LOAD_DEFINITIONS=yes
+    # volumes:
+    #   - "./rabbitmq/defenitions.json:/etc/rabbitmq/defenitions.json"
+    #   - rabbitmq:/bitnami/rabbitmq/mnesia
 
   postgres:
     image: timescale/timescaledb-ha:pg16
@@ -34,82 +47,6 @@ services:
       - ./init-db/metrics-user.sql:/docker-entrypoint-initdb.d/z_02_metrics-user.sql
       - postgres:/home/postgres/pgdata/data
   
-  # openobserve:
-  #   image: public.ecr.aws/zinclabs/openobserve:latest
-  #   restart: unless-stopped
-  #   environment:
-  #     ZO_ROOT_USER_EMAIL: "test@email.com"
-  #     ZO_ROOT_USER_PASSWORD: "12345"
-  #   ports:
-  #     - "5080:5080"
-  #   volumes:
-  #     - openobserve:/data
-
-  # otel-lgtm:
-  #   image: grafana/otel-lgtm
-  #   restart: always
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "3000:3000"
-  #     - "4317:4317"
-  #     - "4318:4318"
-  #     - "9090:9090"
-  #     - "3100:3100" 
-  #   environment:
-  #     - OTEL_METRIC_EXPORT_INTERVAL=500
-  #   volumes:
-  #     - otel-lgtm:/var/lib/grafana
-  #     - ./prometheus/prometheus.yaml:/otel-lgtm/prometheus.yaml
-  #     - ./graphana/postgres.json:/otel-lgtm/postgres.yaml
-  #     - ./graphana/docker.json:/otel-lgtm/docker.yaml
-  #     - ./graphana/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
-
-  # postgres-exporter:
-  #   image: quay.io/prometheuscommunity/postgres-exporter
-  #   restart: always
-  #   networks:
-  #     - app
-  #   depends_on:
-  #     postgres:
-  #       condition: service_started
-  #     otel-lgtm:
-  #       condition: service_started
-  #   ports:
-  #     - "9187:9187"
-  #   environment:
-  #     - DATA_SOURCE_URI=postgres:5432/exchange?sslmode=disable
-  #     - DATA_SOURCE_USER=exchange
-  #     - DATA_SOURCE_PASS=exchange
-
-  # node-exporter:
-  #   image: prom/node-exporter:latest
-  #   container_name: monitoring_node_exporter
-  #   restart: unless-stopped
-  #   networks:
-  #     - app
-  #   ports:
-  #     - "9100:9100"
-  #   expose:
-  #     - 9100
-
-  # cadvisor:
-  #   image: gcr.io/cadvisor/cadvisor:v0.51.0
-  #   container_name: cadvisor
-  #   restart: always
-  #   networks:
-  #     - app
-  #   volumes:
-  #     - /:/rootfs:ro
-  #     - /var/run:/var/run:ro
-  #     - /sys:/sys:ro
-  #     - /var/lib/docker/:/var/lib/docker:ro
-  #     - /dev/disk/:/dev/disk:ro
-  #   ports:
-  #     - "8080:8080"
-  #   expose:
-  #     - 8080
-
   # exchange:
   #   image: "exchange"
   #   networks:

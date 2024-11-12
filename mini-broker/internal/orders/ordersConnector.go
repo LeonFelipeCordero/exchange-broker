@@ -1,12 +1,14 @@
 package orders
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"mini-broker/config"
+	domain "mini-broker/domain/model"
 	"mini-broker/pkg/rabbitmq"
-	"os"
-	"os/signal"
+	"mini-broker/pkg/storage"
+	"mini-broker/pkg/websocketClient"
 
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
@@ -14,11 +16,17 @@ import (
 
 func ConnectExchangeCreateOrderApi(rabbitmqSession *rabbitmq.Rabbitmq) {
 	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderCreatedQueue)
+	orderRepository := storage.CreateOrderRepository()
 
-	c := connectToWs("orders/submission")
+	c := websocketClient.Connect("orders/submission")
 
 	for message := range queueChannel {
+		var order domain.Order
+		json.Unmarshal(message.Body, &order)
+		orderRepository.SaveOrder(order)
+
 		err := c.WriteMessage(websocket.TextMessage, message.Body)
+
 		if err != nil {
 			log.Println("Error writing message to websocket connection", err)
 		}
@@ -26,62 +34,35 @@ func ConnectExchangeCreateOrderApi(rabbitmqSession *rabbitmq.Rabbitmq) {
 }
 
 func ConnectExchangeOrderUpdatesApi(rabbitmqSession *rabbitmq.Rabbitmq) {
-	//rabbitmqSession := rabbitmq.CreateRabbitMQConnection()
-	//queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderQueue)
+	endpoint := fmt.Sprintf("orders/update/%s", viper.GetString("application.institution-id"))
+	c := websocketClient.Connect(endpoint)
 
-  institutionId := viper.GetString("application.intitution-id")
-	c := connectToWs("orders/update/" + institutionId)
-
-	var messageChannel = make(chan []byte)
-	go handleConnection(c, messageChannel)
-
-	//for message := range queueChannel {
-	//	err = c.WriteMessage(websocket.TextMessage, message.Body)
-	//	if err != nil {
-	//		log.Println("Error writing message to websocket connection", err)
-	//	}
-	//}
+	go handleConnection(c, rabbitmqSession)
 }
 
-func connectToWs(endpoint string) *websocket.Conn {
-	host := fmt.Sprintf("%s/%s", viper.Get("exchange.websocket"), endpoint)
-	log.Printf("connecting to %s", host)
-
-	c, _, err := websocket.DefaultDialer.Dial(host, nil)
-	if err != nil {
-		log.Fatal("dial:", err)
-	}
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	return c
-}
-
-func handeInterruptSignal(connection *websocket.Conn, interrupt chan os.Signal) {
-loop:
-	for {
-		select {
-		case <-interrupt:
-			log.Println("Received interrupt signal, closing connection...")
-			err := connection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("error closing websocket connection", err)
-			}
-			break loop
-		}
-	}
-}
-
-func handleConnection(connection *websocket.Conn, messageChannel chan []byte) {
+func handleConnection(connection *websocket.Conn, rabbitmqSession *rabbitmq.Rabbitmq) {
 	for {
 		_, message, err := connection.ReadMessage()
 		if err != nil {
 			log.Println("read:", err)
 			return
 		}
-		//todo this one has to be be first connected to a consumer, for now only prints the message
-		log.Printf("received: %s", message)
-		messageChannel <- message
+		rabbitmqSession.PublishTopic(config.BrokerOrdersTopic, config.BrokerOrderFilledKey, message)
+	}
+}
+
+func HanldeOrderFilledEvent(rabbitmqSession *rabbitmq.Rabbitmq) {
+	queueChannel := rabbitmqSession.ConsumeQueue(config.BrokerOrderFilledQueue)
+	orderRepository := storage.CreateOrderRepository()
+
+	for message := range queueChannel {
+		var orderFilledMessage domain.OrderFilledMessage
+		json.Unmarshal(message.Body, &orderFilledMessage)
+
+		order := orderRepository.FindOrderByReference(orderFilledMessage.ExternalReference)
+		order.Filled = true
+		order.FilledTimestamp = &orderFilledMessage.FilledTimestamp
+
+		orderRepository.UpdateOrder(order)
 	}
 }

@@ -1,0 +1,164 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "exchanges":[
+    {
+      "name": "broker_market_data_topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "broker_orders_topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "exchange_orders_topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "broker_quote_updated_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "broker_instrument_updated_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "broker_order_created_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "broker_order_filled_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "broker_order_cancelled_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "exchange_order_created_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "exchange_order_filled_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+
+  ],
+  "bindings": [
+    {
+      "source": "broker_market_data_topic",
+      "vhost": "/",
+      "destination": "broker_quote_updated_queue",
+      "destination_type": "queue",
+      "routing_key": "quote.updated",
+      "arguments": {}
+    },
+    {
+      "source": "broker_market_data_topic",
+      "vhost": "/",
+      "destination": "broker_instrument_updated_queue",
+      "destination_type": "queue",
+      "routing_key": "instrument.updated",
+      "arguments": {}
+    },
+    {
+      "source": "broker_orders_topic",
+      "vhost": "/",
+      "destination": "broker_order_created_queue",
+      "destination_type": "queue",
+      "routing_key": "order.created",
+      "arguments": {}
+    },
+    {
+      "source": "broker_orders_topic",
+      "vhost": "/",
+      "destination": "broker_order_filled_queue",
+      "destination_type": "queue",
+      "routing_key": "order.filled",
+      "arguments": {}
+    },
+    {
+      "source": "broker_orders_topic",
+      "vhost": "/",
+      "destination": "broker_order_cancelled_queue",
+      "destination_type": "queue",
+      "routing_key": "order.cancelled",
+      "arguments": {}
+    },
+    {
+      "source": "exchange_orders_topic",
+      "vhost": "/",
+      "destination": "exchange_order_created_queue",
+      "destination_type": "queue",
+      "routing_key": "order.created",
+      "arguments": {}
+    },
+    {
+      "source": "exchange_orders_topic",
+      "vhost": "/",
+      "destination": "exchange_order_filled_queue",
+      "destination_type": "queue",
+      "routing_key": "order.filled",
+      "arguments": {}
+    }
+
+  ],
+  "users": [
+  {
+    "name": "market_data",
+    "password_hash": "MDaX/sjd/LaMyxQ4nUOI53xSJY46EAXJRpjHV1QegvT0BRrj",
+    "tags": [ "administrator" ]
+  }
+  ],
+  "permissions": [
+    {
+      "user": "market_data",
+      "vhost": "/",
+      "configure": ".*",
+      "read": ".*",
+      "write": ".*"
+    }
+  ]
+}
+

@@ -11,7 +11,7 @@ import jakarta.inject.Inject
 
 @WebSocket(path = "/ws/orders/update/{institution}")
 class OrderUpdatesWebSocketApi {
-    val institutionPath = "institution"
+    private val institutionPathName = "institution"
 
     @Inject
     private lateinit var orderFilledHandler: OrderFilledHandler
@@ -22,8 +22,10 @@ class OrderUpdatesWebSocketApi {
 
     @OnOpen(broadcast = true)
     fun onOpen(webSocketConnection: WebSocketConnection) {
-        Log.info("Connection open in order updates endpoint with id ${webSocketConnection.id()}")
-        val institution = webSocketConnection.pathParam(institutionPath)
+        val institution = webSocketConnection.pathParam(institutionPathName)
+        Log.info(
+            "Connection open in order updates with id ${webSocketConnection.id()}, institution $institution"
+        )
         orderFilledHandler.addConnection(webSocketConnection.id(), institution)
     }
 

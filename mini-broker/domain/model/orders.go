@@ -7,35 +7,19 @@ import (
 )
 
 type Order struct {
-	Reference   string    `json:"reference"`
-	Instrument  string    `json:"instrument"`
-	Nominals    float64   `json:"nominals"`
-	Price       float64   `json:"price"`
-	Amount      float64   `json:"amount"`
-	Currency    string    `json:"currency"`
-	Type        string    `json:"type"`
-	Trader      string    `json:"trader"`
-	Institution string    `json:"institution"`
-	Timestamp   time.Time `json:"timestamp"`
-}
-
-type OpenOrder struct {
-	Reference       string    `json:"reference"`
-	Instrument      string    `json:"instrument"`
-	Nominals        float64   `json:"nominals"`
-	Price           float64   `json:"price"`
-	MatchedQuantity float64   `json:"matchedQuantity"`
-	Type            string    `json:"type"`
-	CreatedAt       time.Time `json:"createdAt"`
-	UpdatedAt       time.Time `json:"updatedAt"`
-}
-
-type OrderMatching struct {
-	Buy             OpenOrder `json:"buy"`
-	Sell            OpenOrder `json:"sell"`
-	MatchedNominals float64   `json:"matchedNominals"`
-	CreatedAt       time.Time `json:"createdAt"`
-	UpdatedAt       time.Time `json:"updatedAt"`
+	Reference       string     `json:"reference"`
+	Instrument      string     `json:"instrument"`
+	Nominals        float64    `json:"nominals"`
+	Price           float64    `json:"price"`
+	Amount          float64    `json:"amount"`
+	Currency        string     `json:"currency"`
+	Type            string     `json:"type"`
+	Trader          string     `json:"trader"`
+	Institution     string     `json:"institution"`
+	Timestamp       time.Time  `json:"timestamp"`
+	Filled          bool       `json:"filled"`
+	FilledTimestamp *time.Time `json:"filledTimestamp"`
+	OrderReference  *string    `json:"orderReference"`
 }
 
 func (order *Order) ToBytes() []byte {
@@ -54,45 +38,13 @@ func (order *Order) FromBytes(bytes []byte) {
 	}
 }
 
-func (orderMatching *OrderMatching) ToBytes() []byte {
-	bytes, err := json.Marshal(orderMatching)
-	if err != nil {
-		log.Println("Error marshalling orders matching", err)
-		return nil
-	}
-	return bytes
-}
-
-func (orderMatching *OrderMatching) FromBytes(bytes []byte) {
-	err := json.Unmarshal(bytes, orderMatching)
-	if err != nil {
-		log.Println("Error unmarshalling orders matching", err)
-	}
-}
-
-//func (openOrder *OpenOrder) RemainingQuantity() float64 {
-//	return *new(big.Float).Sub(&openOrder.Nominals, &openOrder.MatchedQuantity)
-//}
-
-func (openOrder *OpenOrder) ToBytes() []byte {
-	bytes, err := json.Marshal(openOrder)
-	if err != nil {
-		log.Println("Error marshalling open orders", err)
-		return nil
-	}
-	return bytes
-}
-
-func (openOrder *OpenOrder) FromBytes(bytes []byte) {
-	err := json.Unmarshal(bytes, openOrder)
-	if err != nil {
-		log.Println("Error unmarshalling orders", err)
-	}
-}
-
-func (openOrder *OpenOrder) FromString(value string) {
-	err := json.Unmarshal([]byte(value), openOrder)
-	if err != nil {
-		log.Println("Error unmarshalling orders", err)
-	}
+type OrderFilledMessage struct {
+	OrderReference      string    `json:"orderReference"`
+	ExternalReference   string    `json:"externalReference"`
+	Instrument          string    `json:"instrument"`
+	Nominals            float64   `json:"nominals"`
+	OriginalPrice       float64   `json:"originalPrice"`
+	Institution         string    `json:"institution"`
+	SubmissionTimestamp time.Time `json:"submissionTimestamp"`
+	FilledTimestamp     time.Time `json:"filledTimestamp"`
 }

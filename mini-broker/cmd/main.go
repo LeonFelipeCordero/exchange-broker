@@ -37,13 +37,14 @@ func main() {
 	marketDataConsumer := marketData.CreateMarketDataConsumer(ctx, rabbitmqSession)
 
 	var wg sync.WaitGroup
-	wg.Add(5)
+	wg.Add(6)
 	log.Println("initializing market data and orders consumers...")
 	go marketDataConnector.Connect()
 	go marketDataConsumer.Connect()
 	go orders.StartRandomOrderCreation(ctx, rabbitmqSession)
 	go orders.ConnectExchangeCreateOrderApi(rabbitmqSession)
 	go orders.ConnectExchangeOrderUpdatesApi(rabbitmqSession)
+  go orders.HanldeOrderFilledEvent(rabbitmqSession)
 	wg.Wait()
 }
 

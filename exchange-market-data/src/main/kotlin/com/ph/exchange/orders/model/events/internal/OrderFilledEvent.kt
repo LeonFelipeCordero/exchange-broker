@@ -5,7 +5,7 @@ import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 /**
- * And order-filled event can be more informative my adding the parties that are matched
+ * And order-filled event can be more informative by adding the parties that are matched
  */
 data class OrderFilledEvent(
     val orderReference: String,
